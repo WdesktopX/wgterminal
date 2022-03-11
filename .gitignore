@@ -1,0 +1,7 @@
+config.h
+config.mk
+config.log
+config.sh
+*.o
+src/lxterminal
+lxterminal-preferences.ui
