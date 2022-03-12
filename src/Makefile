@@ -2,12 +2,13 @@ include ../config.mk
 
 APP  = lxterminal
 # ls *.c | sed "s%\.c%.o%g" | tr "\n" " " >> Makefile
-OBJS = lxterminal.o preferences.o setting.o tab.o unixsocket.o 
+# remove tab.c 
+OBJS = lxterminal.o preferences.o setting.o unixsocket.o 
 
-LDFLAGS +=  $(PACKAGE_LIBS) $(INTLLIBS)
+LDFLAGS += 
 #CPPFLAGS += -I..
-CFLAGS += -I.. 
-LIBS   += 
+CFLAGS += -I.. $(VTE_CFLAGS)
+LIBS   += $(VTE_LIBS) -lX11
 
 all: $(APP)
 

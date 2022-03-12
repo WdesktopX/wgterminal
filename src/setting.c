@@ -18,9 +18,12 @@
  *      MA 02110-1301, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <vte/vte.h>
 #include <sys/types.h>
@@ -334,7 +337,7 @@ Setting * load_setting()
     g_mkdir_with_parents(dir, S_IRUSR | S_IWUSR | S_IXUSR);
     gchar * user_config_path = g_build_filename(dir, "lxterminal.conf", NULL);
     g_free(dir);
-    gchar * system_config_path = g_strdup(PACKAGE_DATA_DIR "/lxterminal/lxterminal.conf");
+    gchar * system_config_path = g_strdup(DATADIR "/lxterminal/lxterminal.conf");
     gchar * config_path = user_config_path;
     
     gboolean need_save = FALSE;

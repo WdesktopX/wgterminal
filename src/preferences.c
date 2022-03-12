@@ -18,9 +18,12 @@
  *      MA 02110-1301, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 #include <vte/vte.h>
 #include <gdk/gdkkeysyms.h>
 
@@ -283,7 +286,7 @@ void terminal_preferences_dialog(GtkAction * action, LXTerminal * terminal)
     Setting * setting = copy_setting(get_setting());
 
     builder = gtk_builder_new();
-    if ( ! gtk_builder_add_from_file(builder, PACKAGE_DATA_DIR "/lxterminal/lxterminal-preferences.ui", NULL))
+    if ( ! gtk_builder_add_from_file(builder, DATADIR "/lxterminal/lxterminal-preferences.ui", NULL))
     {
         g_object_unref(builder);
         return;
@@ -291,7 +294,7 @@ void terminal_preferences_dialog(GtkAction * action, LXTerminal * terminal)
 
     GtkDialog * dialog = GTK_DIALOG(gtk_builder_get_object(builder, "lxterminal_preferences"));
     gtk_window_set_title(GTK_WINDOW(dialog), _("LXTerminal"));
-    gtk_window_set_icon_from_file(GTK_WINDOW(dialog), PACKAGE_DATA_DIR "/icons/hicolor/128x128/apps/lxterminal.png", NULL);
+    gtk_window_set_icon_from_file(GTK_WINDOW(dialog), DATADIR "/icons/hicolor/128x128/apps/lxterminal.png", NULL);
 
     GtkWidget * w = GTK_WIDGET(gtk_builder_get_object(builder, "terminal_font"));
 #if GTK_CHECK_VERSION (3, 2, 0)

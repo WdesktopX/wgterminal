@@ -21,6 +21,7 @@
 #ifndef LXTERMINAL_SETTING_H
 #define LXTERMINAL_SETTING_H
 
+#include <string.h>
 #include <gtk/gtk.h>
 #include <vte/vte.h>
 
