@@ -7,8 +7,8 @@ OBJS = lxterminal.o preferences.o setting.o unixsocket.o
 
 LDFLAGS += 
 #CPPFLAGS += -I..
-CFLAGS += -I.. $(VTE_CFLAGS)
-LIBS   += $(VTE_LIBS) -lX11
+CFLAGS += -I.. -I../libwgtk $(VTE_CFLAGS)
+LIBS   += $(VTE_LIBS) -lX11 ../libwgtk/libwgtk.a
 
 all: $(APP)
 

@@ -24,7 +24,7 @@ PROJECT_TYPE=C
 #W_USE_MKTEMP=1
 
 # config.h: custom extra lines
-w_config_h_extra_lines=""
+w_config_h_extra_lines="#define USE_GTK_ACTION 1"
 
 # config.mk: custom extra lines
 w_config_mk_extra_lines=""
