@@ -76,6 +76,8 @@ static gboolean terminal_zoom_out_activate_event(GtkAction * action, LXTerminal 
 static gboolean terminal_zoom_reset_activate_event(GtkAction * action, LXTerminal * terminal);
 static void terminal_about_activate_event(GtkAction * action, LXTerminal * terminal);
 
+#include "lxterminal-menu.c"
+
 /* Window creation, destruction, and control. */
 static void terminal_switch_page_event(GtkNotebook * notebook, GtkWidget * page, guint num, LXTerminal * terminal);
 static void terminal_vte_size_allocate_event(GtkWidget *widget, GtkAllocation *allocation, Term *term);
@@ -151,30 +153,6 @@ static GtkActionEntry menu_items[] =
 /* 23 */    { "Help_About", "help-about", N_("_About"), NULL, "About", G_CALLBACK(terminal_about_activate_event) },
 };
 #define MENUBAR_MENUITEM_COUNT G_N_ELEMENTS(menu_items)
-
-/* Descriptors for popup menu items, accessed via right click on the terminal. */
-static GtkActionEntry vte_menu_items[] =
-{
-    { "VTEMenu", NULL, "VTEMenu" },
-    { "NewWindow", "list-add", N_("New _Window"), NULL, "New Window", G_CALLBACK(terminal_new_window_activate_event) },
-    { "NewTab", "list-add", N_("New _Tab"), NULL, "New Tab", G_CALLBACK(terminal_new_tab_activate_event) },
-    { "Sep1", NULL, "Sep" },
-    { "OpenURL", NULL, N_("Open _URL"), NULL, "Open URL", G_CALLBACK(terminal_open_url_activate_event) },
-    { "CopyURL", NULL, N_("Copy _URL"), NULL, "Copy URL", G_CALLBACK(terminal_copy_url_activate_event) },
-    { "Copy", "edit-copy", N_("Cop_y"), NULL, "Copy", G_CALLBACK(terminal_copy_activate_event) },
-    { "Paste", "edit-paste", N_("_Paste"), NULL, "Paste", G_CALLBACK(terminal_paste_activate_event) },
-    { "Clear", NULL, N_("Cl_ear scrollback"), NULL, "Clear scrollback", G_CALLBACK(terminal_clear_activate_event) },
-    { "Sep2", NULL, "Sep" },
-    { "Preferences", "system-run", N_("Preference_s"), NULL, "Preferences", G_CALLBACK(terminal_preferences_dialog) },
-    { "Sep3", NULL, "Sep" },
-    { "NameTab", "dialog-information", N_("Na_me Tab"), NULL, "Name Tab", G_CALLBACK(terminal_name_tab_activate_event) },
-    { "PreviousTab", "go-previous", N_("Pre_vious Tab"), NULL, "Previous Tab", G_CALLBACK(terminal_previous_tab_activate_event) },
-    { "NextTab", "go-next", N_("Ne_xt Tab"), NULL, "Next Tab", G_CALLBACK(terminal_next_tab_activate_event) },
-    { "Tabs_MoveTabLeft", NULL, N_("Move Tab _Left"), NULL, "Move Tab Left", G_CALLBACK(terminal_move_tab_left_activate_event) },
-    { "Tabs_MoveTabRight", NULL, N_("Move Tab _Right"), NULL, "Move Tab Right", G_CALLBACK(terminal_move_tab_right_activate_event) },
-    { "CloseTab", "window-close", N_("_Close Tab"), NULL, "Close Tab", G_CALLBACK(terminal_close_tab_activate_event) }
-};
-#define VTE_MENUITEM_COUNT G_N_ELEMENTS(vte_menu_items)
 
 /* Accessor for border values from VteTerminal. */
 static void terminal_get_border(Term * term, GtkBorder * border)
@@ -972,44 +950,25 @@ static gchar * terminal_get_match_at(VteTerminal * vte, Term * term, GdkEventBut
 
 static void terminal_show_popup_menu(VteTerminal * vte, GdkEventButton * event, Term * term)
 {
-    /* Generate popup menu. */
-    GtkUIManager * manager = gtk_ui_manager_new();
-    GtkActionGroup * action_group = gtk_action_group_new("VTEMenu");
-#ifdef ENABLE_NLS
-    gtk_action_group_set_translation_domain(action_group, GETTEXT_PACKAGE);
-#endif
-    gtk_action_group_add_actions(action_group, vte_menu_items, VTE_MENUITEM_COUNT, term->parent);
-    gtk_ui_manager_insert_action_group(manager, action_group, 0);
-
-    guint merge_id = gtk_ui_manager_new_merge_id(manager);
-    gtk_ui_manager_add_ui(manager, merge_id, "/", "VTEMenu", NULL, GTK_UI_MANAGER_POPUP, FALSE);
-
-    size_t i;
-    for (i = 1; i < VTE_MENUITEM_COUNT; i++)
-    {
-        if (strcmp(vte_menu_items[i].label, "Sep") == 0)
-            gtk_ui_manager_add_ui(manager, merge_id, "/VTEMenu",
-                vte_menu_items[i].name, NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
-        else
-            gtk_ui_manager_add_ui(manager, merge_id, "/VTEMenu",
-                vte_menu_items[i].name, vte_menu_items[i].name, GTK_UI_MANAGER_MENUITEM, FALSE);
+    if (!vtemenu) {
+        /* Generate popup menu. */
+        vtemenu_group = gtk_action_group_new ("VTEMenu");
+        vtemenu = create_popup_menu (vtemenu_group, term->parent);
     }
 
     g_free(term->matched_url);
     term->matched_url = terminal_get_match_at(vte, term, event);
-
-    GtkAction * action_copy_url = gtk_ui_manager_get_action(manager, "/VTEMenu/CopyURL");
-    GtkAction * action_open_url = gtk_ui_manager_get_action(manager, "/VTEMenu/OpenURL");
+    GtkAction * action_copy_url = gtk_action_group_get_action (vtemenu_group, "CopyURL");
+    GtkAction * action_open_url = gtk_action_group_get_action (vtemenu_group, "OpenURL");
     if (action_copy_url) {
         gtk_action_set_visible(action_copy_url, term->matched_url != NULL);
         gtk_action_set_visible(action_open_url, term->matched_url != NULL);
     }
 
 #if GTK_CHECK_VERSION(3, 22, 0)
-    gtk_menu_popup_at_pointer(GTK_MENU(gtk_ui_manager_get_widget(manager, "/VTEMenu")), (GdkEvent *) event);
+    gtk_menu_popup_at_pointer (GTK_MENU(vtemenu), (GdkEvent *) event);
 #else
-    gtk_menu_popup(GTK_MENU(gtk_ui_manager_get_widget(manager, "/VTEMenu")),
-        NULL, NULL, NULL, NULL, event->button, event->time);
+    gtk_menu_popup (GTK_MENU(vtemenu), NULL, NULL, NULL, NULL, event->button, event->time);
 #endif
 }
 
