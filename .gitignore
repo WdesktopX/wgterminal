@@ -4,6 +4,5 @@ config.log
 config.sh
 *.o
 src/lxterminal
-lxterminal-preferences.ui
 *.mo
 *.a

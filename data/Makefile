@@ -1,11 +1,11 @@
 
 include ../config.mk
 
-all: lxterminal-preferences.ui
+all:
 
 strip:
 
-install: lxterminal-preferences.ui
+install:
 	mkdir -p $(DESTDIR)$(datadir)/applications
 	$(INSTALL_DATA) lxterminal.desktop $(DESTDIR)$(datadir)/applications
 	mkdir -p $(DESTDIR)$(datadir)/icons/hicolor/128x128/apps
@@ -27,8 +27,4 @@ uninstall:
 clean:
 
 distclean:
-
-
-lxterminal-preferences.ui:
-	sed 's/<!--.*-->//' < lxterminal-preferences.glade | sed ':a;N;$$!ba;s/ *\n *</</g' > $@
 
