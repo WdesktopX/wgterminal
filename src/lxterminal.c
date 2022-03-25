@@ -1280,7 +1280,7 @@ static Term * terminal_new(LXTerminal * terminal, const gchar * label, const gch
                     &term->pid,
                     NULL,
                     NULL);
-#else
+#elif VTE_CHECK_VERSION (0, 26, 0)
     vte_terminal_fork_command_full(
                     VTE_TERMINAL(term->vte),
                     VTE_PTY_NO_LASTLOG | VTE_PTY_NO_UTMP | VTE_PTY_NO_WTMP,
@@ -1292,6 +1292,16 @@ static Term * terminal_new(LXTerminal * terminal, const gchar * label, const gch
                     NULL,
                     &term->pid,
                     NULL);
+#else
+    vte_terminal_fork_command (
+                    VTE_TERMINAL(term->vte),
+                    exec[0],
+                    &exec[1],
+                    env,
+                    pwd,
+                    FALSE,
+                    FALSE,
+                    FALSE);
 #endif
     g_strfreev(exec);
 
