@@ -105,19 +105,19 @@ extern gboolean lxterminal_process_arguments(gint argc, gchar * * argv, CommandA
 extern LXTerminal * lxterminal_initialize(LXTermWindow * lxtermwin, CommandArguments * arguments);
 extern void terminal_settings_apply_to_all(LXTerminal * terminal);
 
-#define ACCEL_PATH_FILE_NEWWINDOW   "<LXTerminal>/MenuBar/File_NewWindow"
-#define ACCEL_PATH_FILE_NEWTAB      "<LXTerminal>/MenuBar/File_NewTab"
-#define ACCEL_PATH_FILE_CLOSETAB    "<LXTerminal>/MenuBar/File_CloseTab"
-#define ACCEL_PATH_FILE_CLOSEWINDOW "<LXTerminal>/MenuBar/File_CloseWindow"
-#define ACCEL_PATH_EDIT_COPY        "<LXTerminal>/MenuBar/Edit_Copy"
-#define ACCEL_PATH_EDIT_PASTE       "<LXTerminal>/MenuBar/Edit_Paste"
-#define ACCEL_PATH_EDIT_ZOOMIN      "<LXTerminal>/MenuBar/Edit_ZoomIn"
-#define ACCEL_PATH_EDIT_ZOOMOUT     "<LXTerminal>/MenuBar/Edit_ZoomOut"
-#define ACCEL_PATH_EDIT_ZOOMRESET   "<LXTerminal>/MenuBar/Edit_ZoomReset"
-#define ACCEL_PATH_TABS_NAMETAB     "<LXTerminal>/MenuBar/Tabs_NameTab"
-#define ACCEL_PATH_TABS_PREVIOUSTAB "<LXTerminal>/MenuBar/Tabs_PreviousTab"
-#define ACCEL_PATH_TABS_NEXTTAB     "<LXTerminal>/MenuBar/Tabs_NextTab"
-#define ACCEL_PATH_TABS_MOVELEFT    "<LXTerminal>/MenuBar/Tabs_MoveTabLeft"
-#define ACCEL_PATH_TABS_MOVERIGHT   "<LXTerminal>/MenuBar/Tabs_MoveTabRight"
+#define ACCEL_PATH_FILE_NEWWINDOW   "<LXTerminal>/File/NewWindow"
+#define ACCEL_PATH_FILE_NEWTAB      "<LXTerminal>/File/NewTab"
+#define ACCEL_PATH_FILE_CLOSETAB    "<LXTerminal>/File/CloseTab"
+#define ACCEL_PATH_FILE_CLOSEWINDOW "<LXTerminal>/File/CloseWindow"
+#define ACCEL_PATH_EDIT_COPY        "<LXTerminal>/Edit/Copy"
+#define ACCEL_PATH_EDIT_PASTE       "<LXTerminal>/Edit/Paste"
+#define ACCEL_PATH_EDIT_ZOOMIN      "<LXTerminal>/Edit/ZoomIn"
+#define ACCEL_PATH_EDIT_ZOOMOUT     "<LXTerminal>/Edit/ZoomOut"
+#define ACCEL_PATH_EDIT_ZOOMRESET   "<LXTerminal>/Edit/ZoomReset"
+#define ACCEL_PATH_TABS_NAMETAB     "<LXTerminal>/Tabs/NameTab"
+#define ACCEL_PATH_TABS_PREVIOUSTAB "<LXTerminal>/Tabs/PreviousTab"
+#define ACCEL_PATH_TABS_NEXTTAB     "<LXTerminal>/Tabs/NextTab"
+#define ACCEL_PATH_TABS_MOVELEFT    "<LXTerminal>/Tabs/MoveTabLeft"
+#define ACCEL_PATH_TABS_MOVERIGHT   "<LXTerminal>/Tabs/MoveTabRight"
 
 #endif

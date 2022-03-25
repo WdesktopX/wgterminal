@@ -54,27 +54,27 @@ static const gchar * terminal_get_preferred_shell();
 static void terminal_initialize_switch_tab_accelerator(Term * term);
 static void terminal_update_alt(LXTerminal *terminal);
 static gboolean terminal_switch_tab_accelerator(Term * term);
-static void terminal_new_window_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_new_tab_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_close_tab_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_close_window_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_open_url_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_copy_url_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_copy_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_paste_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_clear_activate_event(GtkAction * action, LXTerminal * terminal);
+static void terminal_new_window_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_new_tab_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_close_tab_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_close_window_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_open_url_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_copy_url_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_copy_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_paste_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_clear_activate_event (GtkMenuItem * item, LXTerminal * terminal);
 static void terminal_name_tab_response_event(GtkWidget * dialog, gint response, Term * term);
-static void terminal_name_tab_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_previous_tab_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_next_tab_activate_event(GtkAction * action, LXTerminal * terminal);
+static void terminal_name_tab_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_previous_tab_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_next_tab_activate_event (GtkMenuItem * item, LXTerminal * terminal);
 static void terminal_move_tab_execute(LXTerminal * terminal, gint direction);
-static void terminal_move_tab_left_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_move_tab_right_activate_event(GtkAction * action, LXTerminal * terminal);
+static void terminal_move_tab_left_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_move_tab_right_activate_event (GtkMenuItem * item, LXTerminal * terminal);
 static void terminal_zoom(LXTerminal * terminal);
-static gboolean terminal_zoom_in_activate_event(GtkAction * action, LXTerminal * terminal);
-static gboolean terminal_zoom_out_activate_event(GtkAction * action, LXTerminal * terminal);
-static gboolean terminal_zoom_reset_activate_event(GtkAction * action, LXTerminal * terminal);
-static void terminal_about_activate_event(GtkAction * action, LXTerminal * terminal);
+static gboolean terminal_zoom_in_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static gboolean terminal_zoom_out_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static gboolean terminal_zoom_reset_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_about_activate_event (GtkMenuItem * item, LXTerminal * terminal);
 
 #include "lxterminal-menu.c"
 
@@ -306,7 +306,7 @@ static gboolean terminal_switch_tab_accelerator(Term * term)
 
 /* Handler for "activate" signal on File/New Window menu item.
  * Open a new window. */
-static void terminal_new_window_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_new_window_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     CommandArguments arguments;
     memset(&arguments, 0, sizeof(arguments));
@@ -317,7 +317,7 @@ static void terminal_new_window_activate_event(GtkAction * action, LXTerminal * 
 
 /* Handler for "activate" signal on File/New Tab menu item.
  * Open a new tab. */
-static void terminal_new_tab_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_new_tab_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     terminal_new_tab(terminal, NULL);
 }
@@ -409,7 +409,7 @@ static void terminal_vte_size_allocate_event(GtkWidget *widget, GtkAllocation *a
 
 /* Handler for "activate" signal on File/Close Tab menu item.
  * Close the current tab. */
-static void terminal_close_tab_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_close_tab_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     Term * term = g_ptr_array_index(terminal->terms, gtk_notebook_get_current_page(GTK_NOTEBOOK(terminal->notebook)));
 #if VTE_CHECK_VERSION (0, 38, 0)
@@ -421,7 +421,7 @@ static void terminal_close_tab_activate_event(GtkAction * action, LXTerminal * t
 
 /* Handler for "activate" signal on File/Close Window menu item.
  * Close the current window. */
-static void terminal_close_window_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_close_window_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     if (!terminal_close_window_confirmation_dialog(terminal)) {
         return;
@@ -440,7 +440,7 @@ static void terminal_close_window_activate_event(GtkAction * action, LXTerminal 
 
 /* Handler for the "Open URL" right-click menu item.
  * Fork+exec xdg-open the url. */
-static void terminal_open_url_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_open_url_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
         Term * term = g_ptr_array_index(terminal->terms, gtk_notebook_get_current_page(GTK_NOTEBOOK(terminal->notebook)));
         if (term->matched_url)
@@ -454,7 +454,7 @@ static void terminal_open_url_activate_event(GtkAction * action, LXTerminal * te
 
 /* Handler for the "Copy URL" right-click menu item.
  * Copy the URL to the clipboard. */
-static void terminal_copy_url_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_copy_url_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     Term * term = g_ptr_array_index(terminal->terms, gtk_notebook_get_current_page(GTK_NOTEBOOK(terminal->notebook)));
     if (term->matched_url)
@@ -466,7 +466,7 @@ static void terminal_copy_url_activate_event(GtkAction * action, LXTerminal * te
 
 /* Handler for "activate" signal on Edit/Copy menu item.
  * Copy to the clipboard. */
-static void terminal_copy_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_copy_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     Term * term = g_ptr_array_index(terminal->terms, gtk_notebook_get_current_page(GTK_NOTEBOOK(terminal->notebook)));
 #if VTE_CHECK_VERSION (0, 50, 0)
@@ -478,7 +478,7 @@ static void terminal_copy_activate_event(GtkAction * action, LXTerminal * termin
 
 /* Handler for "activate" signal on Edit/Paste menu item.
  * Paste from the clipboard. */
-static void terminal_paste_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_paste_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     Term * term = g_ptr_array_index(terminal->terms, gtk_notebook_get_current_page(GTK_NOTEBOOK(terminal->notebook)));
     vte_terminal_paste_clipboard(VTE_TERMINAL(term->vte));
@@ -486,7 +486,7 @@ static void terminal_paste_activate_event(GtkAction * action, LXTerminal * termi
 
 /* Handler for "clear scrollback" signal on Edit/Paste menu item.
  * Clear scrollback. */
-static void terminal_clear_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_clear_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     Term * term = g_ptr_array_index(terminal->terms, gtk_notebook_get_current_page(GTK_NOTEBOOK(terminal->notebook)));
     vte_terminal_set_scrollback_lines(VTE_TERMINAL(term->vte), 0);
@@ -526,7 +526,7 @@ static void terminal_name_tab_response_event(GtkWidget * dialog, gint response, 
 
 /* Handler for "activate" signal on Tabs/Name Tab menu item.
  * Put up a dialog to get a user specified name for the tab. */
-static void terminal_name_tab_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_name_tab_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     Term * term;
     gint current = gtk_notebook_get_current_page(GTK_NOTEBOOK(terminal->notebook));
@@ -572,7 +572,7 @@ static void terminal_name_tab_activate_event(GtkAction * action, LXTerminal * te
 
 /* Handler for "activate" signal on Tabs/Previous Tab menu item.
  * Cycle through tabs in the reverse direction. */
-static void terminal_previous_tab_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_previous_tab_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     /* Cycle through tabs. */
     if (gtk_notebook_get_current_page(GTK_NOTEBOOK(terminal->notebook)) == 0)
@@ -587,7 +587,7 @@ static void terminal_previous_tab_activate_event(GtkAction * action, LXTerminal 
 
 /* Handler for "activate" signal on Tabs/Next Tab menu item.
  * Cycle through tabs in the forward direction. */
-static void terminal_next_tab_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_next_tab_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     /* Cycle through tabs. */
     if (gtk_notebook_get_current_page(GTK_NOTEBOOK(terminal->notebook)) == gtk_notebook_get_n_pages(GTK_NOTEBOOK(terminal->notebook)) - 1)
@@ -629,14 +629,14 @@ static void terminal_move_tab_execute(LXTerminal * terminal, gint direction)
 
 /* Handler for "activate" signal on Tabs/Move Tab Left menu item.
  * Move the tab one position in the reverse direction. */
-static void terminal_move_tab_left_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_move_tab_left_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     terminal_move_tab_execute(terminal, -1);
 }
 
 /* Handler for "activate" signal on Tabs/Move Tab Right menu item.
  * Move the tab one position in the forward direction. */
-static void terminal_move_tab_right_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_move_tab_right_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     terminal_move_tab_execute(terminal, 1);
 }
@@ -682,7 +682,7 @@ static void terminal_zoom(LXTerminal * terminal)
 }
 
 /* Handler for "activate" signal on Tabs/Zoom In */
-static gboolean terminal_zoom_in_activate_event(GtkAction * action, LXTerminal * terminal)
+static gboolean terminal_zoom_in_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     terminal->scale += 0.1;
     terminal_zoom(terminal);
@@ -690,7 +690,7 @@ static gboolean terminal_zoom_in_activate_event(GtkAction * action, LXTerminal *
 }
 
 /* Handler for "activate" signal on Tabs/Zoom Out */
-static gboolean terminal_zoom_out_activate_event(GtkAction * action, LXTerminal * terminal)
+static gboolean terminal_zoom_out_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     if (terminal->scale < 0.3)
         return FALSE;
@@ -700,7 +700,7 @@ static gboolean terminal_zoom_out_activate_event(GtkAction * action, LXTerminal 
 }
 
 /* Handler for "activate" signal on Tabs/Zoom Reset */
-static gboolean terminal_zoom_reset_activate_event(GtkAction * action, LXTerminal * terminal)
+static gboolean terminal_zoom_reset_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     terminal->scale = 1.0;
     terminal_zoom(terminal);
@@ -708,7 +708,7 @@ static gboolean terminal_zoom_reset_activate_event(GtkAction * action, LXTermina
 }
 
 /* Handler for "activate" signal on Help/About menu item. */
-static void terminal_about_activate_event(GtkAction * action, LXTerminal * terminal)
+static void terminal_about_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
     const gchar * authors[] =
     {
@@ -921,17 +921,21 @@ static void terminal_show_popup_menu(VteTerminal * vte, GdkEventButton * event, 
 {
     if (!vtemenu) {
         /* Generate popup menu. */
-        vtemenu_group = gtk_action_group_new ("VTEMenu");
-        vtemenu = create_popup_menu (vtemenu_group, term->parent);
+        vtemenu = create_popup_menu (term->parent);
     }
 
     g_free(term->matched_url);
     term->matched_url = terminal_get_match_at(vte, term, event);
-    GtkAction * action_copy_url = gtk_action_group_get_action (vtemenu_group, "CopyURL");
-    GtkAction * action_open_url = gtk_action_group_get_action (vtemenu_group, "OpenURL");
-    if (action_copy_url) {
-        gtk_action_set_visible(action_copy_url, term->matched_url != NULL);
-        gtk_action_set_visible(action_open_url, term->matched_url != NULL);
+
+    GtkMenuItem * item_copy_url = g_object_get_data (G_OBJECT(vtemenu), "CopyURL");
+    GtkMenuItem * item_open_url = g_object_get_data (G_OBJECT(vtemenu), "OpenURL");
+
+    if (term->matched_url) {
+        gtk_widget_show (GTK_WIDGET (item_copy_url));
+        gtk_widget_show (GTK_WIDGET (item_open_url));
+    } else {
+        gtk_widget_hide (GTK_WIDGET (item_copy_url));
+        gtk_widget_hide (GTK_WIDGET (item_open_url));
     }
 
 #if GTK_CHECK_VERSION(3, 22, 0)

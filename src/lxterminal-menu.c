@@ -1,10 +1,9 @@
 #include "w_gtk_menu.h"
 
 static GtkWidget * vtemenu;
-static GtkActionGroup * vtemenu_group;
 
 
-static GtkWidget * create_popup_menu (GtkActionGroup *action_group, void *user_data)
+static GtkWidget * create_popup_menu (void *user_data)
 {
     GtkWidget * menu = gtk_menu_new();
 
@@ -15,7 +14,6 @@ static GtkWidget * create_popup_menu (GtkActionGroup *action_group, void *user_d
     menuitem.label       = _("New _Window");
     menuitem.icon_name   = "list-add";
     menuitem.action_name = "NewWindow";
-    menuitem.gtk_app     = action_group;
     menuitem.activate_cb = terminal_new_window_activate_event;
     menuitem.cb_data_all = user_data;
     w_gtk_menu_item_new (&menuitem);
@@ -117,7 +115,6 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     GtkWidget * menu_help = gtk_menu_new ();
 
     GtkAccelGroup  *accel_group  = gtk_accel_group_new ();
-    GtkActionGroup *action_group = gtk_action_group_new ("MenuBar");
 
     WGtkMenuItemParams menuitem;
     memset (&menuitem, 0, sizeof(menuitem));
@@ -125,7 +122,6 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     Setting * setting = get_setting ();
 
     terminal->menu = menubar;
-    terminal->action_group = action_group;
     terminal->accel_group  = accel_group;
 
     /* ### Menu File ### */
@@ -133,7 +129,6 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     menuitem.submenu     = menu_file;
     menuitem.label       = _("_File");
     menuitem.action_name = "File";
-    menuitem.gtk_app     = action_group;
     menuitem.accel_group = accel_group; 
     menuitem.cb_data_all = (void*)terminal;
     w_gtk_menu_item_new (&menuitem);

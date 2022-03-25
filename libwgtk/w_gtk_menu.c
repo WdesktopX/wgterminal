@@ -363,6 +363,10 @@ GtkMenuItem * w_gtk_menu_item_new (WGtkMenuItemParams * params)
     }
     if (params->parent_menu) {
         gtk_menu_shell_append (GTK_MENU_SHELL (params->parent_menu), item);
+        // store pointer to menuitem in parent menu (key: params->action_name)
+        if (params->action_name) {
+            g_object_set_data (G_OBJECT(parent_menu), params->action_name, (void*)item);
+        }
     }
 
     if (params->activate_cb) {
