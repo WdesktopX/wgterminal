@@ -24,14 +24,13 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <glib.h>
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
+#include "gtkcompat.h"
 #include <vte/vte.h>
 #include <langinfo.h>
 #include <locale.h>
 #include <sys/stat.h>
 #include <pwd.h>
+#include <unistd.h>
 
 #if VTE_CHECK_VERSION (0, 46, 0)
 #define PCRE2_CODE_UNIT_WIDTH 0
@@ -1118,13 +1117,8 @@ static Term * terminal_new(LXTerminal * terminal, const gchar * label, const gch
 
     /* Create a VTE and a vertical scrollbar, and place them inside a horizontal box. */
     term->vte = vte_terminal_new();
-#if GTK_CHECK_VERSION(3, 0, 0)
     term->box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     term->scrollbar = gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, NULL);
-#else
-    term->box = gtk_hbox_new(FALSE, 0);
-    term->scrollbar = gtk_vscrollbar_new(NULL);
-#endif
     gtk_box_pack_start(GTK_BOX(term->box), term->vte, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(term->box), term->scrollbar, FALSE, TRUE, 0);
     gtk_widget_set_no_show_all(GTK_WIDGET(term->scrollbar), TRUE);
@@ -1179,11 +1173,7 @@ static Term * terminal_new(LXTerminal * terminal, const gchar * label, const gch
     /* Create a horizontal box inside an event box as the toplevel for the tab label. */
     term->tab = gtk_event_box_new();
     gtk_widget_set_events(term->tab, GDK_BUTTON_PRESS_MASK);
-#if GTK_CHECK_VERSION(3, 0, 0)
     GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    GtkWidget * hbox = gtk_hbox_new(FALSE, 4);
-#endif
     gtk_container_add(GTK_CONTAINER(term->tab), hbox);
 
     /* Create the Close button. */
@@ -1571,11 +1561,7 @@ LXTerminal * lxterminal_initialize(LXTermWindow * lxtermwin, CommandArguments * 
     g_object_weak_ref(G_OBJECT(terminal->window), (GWeakNotify) terminal_window_exit, terminal);
 
     /* Create a vertical box as the child of the toplevel window. */
-#if GTK_CHECK_VERSION(3, 0, 0)
     terminal->box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-#else
-    terminal->box = gtk_vbox_new(FALSE, 1);
-#endif
     gtk_container_add(GTK_CONTAINER(terminal->window), terminal->box);
 
     /* Create the menu bar as the child of the vertical box. */

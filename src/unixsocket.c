@@ -66,6 +66,7 @@ static gboolean init(LXTermWindow* lxtermwin, gint argc, gchar** argv) {
     gchar * socket_path = g_strdup_printf("%s/.lxterminal-socket-%s",
             g_get_user_cache_dir(),
             gdk_display_get_name(gdk_display_get_default()));
+    g_mkdir_with_parents (socket_path, 0755);
 #endif
 
     /* Create socket. */

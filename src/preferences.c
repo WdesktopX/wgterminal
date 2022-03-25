@@ -22,10 +22,8 @@
 #include <config.h>
 #endif
 
-#include <glib.h>
-#include <gtk/gtk.h>
+#include "gtkcompat.h"
 #include <vte/vte.h>
-#include <gdk/gdkkeysyms.h>
 
 #include "lxterminal.h"
 #include "setting.h"
@@ -241,7 +239,7 @@ static gboolean preferences_dialog_shortcut_key_press_event(GtkWidget * widget, 
     GList * sib;
 
     /* Prevent Tab being used as one of the keys, and return false if doing so. */
-    if (key == GDK_KEY_Tab || key == GDK_KEY_ISO_Left_Tab) {
+    if (key == GDK_KEY(Tab) || key == GDK_KEY(ISO_Left_Tab)) {
         return FALSE;
     }
 
