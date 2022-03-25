@@ -14,7 +14,6 @@ install: lxterminal-preferences.ui
 	$(INSTALL_DATA) lxterminal.1 $(DESTDIR)$(mandir)/man1
 	mkdir -p $(DESTDIR)$(datadir)/lxterminal
 	$(INSTALL_DATA) lxterminal.conf $(DESTDIR)$(datadir)/lxterminal
-	$(INSTALL_DATA) menu.ui $(DESTDIR)$(datadir)/lxterminal
 	$(INSTALL_DATA) lxterminal-preferences.ui $(DESTDIR)$(datadir)/lxterminal
 
 install-strip: install

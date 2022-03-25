@@ -100,11 +100,9 @@ static Term * terminal_new(LXTerminal * terminal, const gchar * label, const gch
 static void terminal_set_geometry_hints(Term * term, GdkGeometry * geometry);
 static void terminal_new_tab(LXTerminal * terminal, const gchar * label);
 static void terminal_free(Term * term);
-static void terminal_menubar_initialize(LXTerminal * terminal);
 static void terminal_menu_accelerator_update(LXTerminal * terminal);
 static void terminal_settings_apply(LXTerminal * terminal);
 static void terminal_update_menu_shortcuts(Setting * setting);
-static void terminal_initialize_menu_shortcuts(Setting * setting);
 
 /* Menu accelerator saved when the user disables it. */
 static char * saved_menu_accelerator = NULL;
@@ -124,35 +122,6 @@ static gchar usage_display[] = {
     "  -v, --version                    Version information\n"
 };
 
-/* Actions for menu bar items. */
-static GtkActionEntry menu_items[] =
-{
-/* 0 */    { "File", NULL, N_("_File"), NULL, NULL, NULL },
-/* 1 */    { "Edit", NULL, N_("_Edit"), NULL, NULL, NULL },
-/* 2 */    { "Tabs", NULL, N_("_Tabs"), NULL, NULL, NULL },
-/* 3 */    { "Help", NULL, N_("_Help"), NULL, NULL, NULL },
-/* 4 */    { "File_NewWindow", "list-add", N_("_New Window"), NEW_WINDOW_ACCEL_DEF, "New Window", G_CALLBACK(terminal_new_window_activate_event) },
-/* 5 */    { "File_NewTab", "list-add", N_("New T_ab"), NEW_TAB_ACCEL_DEF, "New Tab", G_CALLBACK(terminal_new_tab_activate_event) },
-/* 6 */    { "File_Sep1", NULL, "Sep" },
-/* 7 */    { "File_CloseTab", "window-close", N_("_Close Tab"), CLOSE_TAB_ACCEL_DEF, "Close Tab", G_CALLBACK(terminal_close_tab_activate_event) },
-/* 8 */    { "File_CloseWindow", "application-exit", N_("Close _Window"), CLOSE_WINDOW_ACCEL_DEF, "Close Window", G_CALLBACK(terminal_close_window_activate_event) },
-/* 9 */    { "Edit_Copy", "edit-copy", N_("Cop_y"), COPY_ACCEL_DEF, "Copy", G_CALLBACK(terminal_copy_activate_event) },
-/* 10 */    { "Edit_Paste", "edit-paste", N_("_Paste"), PASTE_ACCEL_DEF, "Paste", G_CALLBACK(terminal_paste_activate_event) },
-/* 11 */    { "Edit_Clear", NULL, N_("Clear scr_ollback"), NULL, "Clear scrollback", G_CALLBACK(terminal_clear_activate_event) },
-/* 12 */    { "Edit_Sep1", NULL, "Sep" },
-/* 13 */    { "Edit_ZoomIn", "zoom-in", N_("Zoom _In"), ZOOM_IN_ACCEL_DEF, "Zoom In", G_CALLBACK(terminal_zoom_in_activate_event) },
-/* 14 */    { "Edit_ZoomOut", "zoom-out", N_("Zoom O_ut"), ZOOM_OUT_ACCEL_DEF, "Zoom Out", G_CALLBACK(terminal_zoom_out_activate_event) },
-/* 15 */    { "Edit_ZoomReset", "zoom-fit-best", N_("Zoom _Reset"), ZOOM_RESET_ACCEL_DEF, "Zoom Reset", G_CALLBACK(terminal_zoom_reset_activate_event) },
-/* 16 */    { "Edit_Sep2", NULL, "Sep" },
-/* 17 */    { "Edit_Preferences", "system-run", N_("Preference_s"), NULL, "Preferences", G_CALLBACK(terminal_preferences_dialog) },
-/* 18 */    { "Tabs_NameTab", "dialog-information", N_("Na_me Tab"), NAME_TAB_ACCEL_DEF, "Name Tab", G_CALLBACK(terminal_name_tab_activate_event) },
-/* 19 */    { "Tabs_PreviousTab", "go-previous", N_("Pre_vious Tab"), PREVIOUS_TAB_ACCEL_DEF, "Previous Tab", G_CALLBACK(terminal_previous_tab_activate_event) },
-/* 20 */    { "Tabs_NextTab", "go-next", N_("Ne_xt Tab"), NEXT_TAB_ACCEL_DEF, "Next Tab", G_CALLBACK(terminal_next_tab_activate_event) },
-/* 21 */    { "Tabs_MoveTabLeft", NULL, N_("Move Tab _Left"), MOVE_TAB_LEFT_ACCEL_DEF, "Move Tab Left", G_CALLBACK(terminal_move_tab_left_activate_event) },
-/* 22 */    { "Tabs_MoveTabRight", NULL, N_("Move Tab _Right"), MOVE_TAB_RIGHT_ACCEL_DEF, "Move Tab Right", G_CALLBACK(terminal_move_tab_right_activate_event) },
-/* 23 */    { "Help_About", "help-about", N_("_About"), NULL, "About", G_CALLBACK(terminal_about_activate_event) },
-};
-#define MENUBAR_MENUITEM_COUNT G_N_ELEMENTS(menu_items)
 
 /* Accessor for border values from VteTerminal. */
 static void terminal_get_border(Term * term, GtkBorder * border)
@@ -1351,30 +1320,6 @@ static void terminal_free(Term * term)
     g_slice_free(Term, term);
 }
 
-/* Initialize the menu bar. */
-static void terminal_menubar_initialize(LXTerminal * terminal)
-{
-    /* Initialize UI manager. */
-    GtkUIManager * manager = gtk_ui_manager_new();
-    terminal->action_group = gtk_action_group_new("MenuBar");
-#ifdef ENABLE_NLS
-    gtk_action_group_set_translation_domain(terminal->action_group, GETTEXT_PACKAGE);
-#endif
-    /* modify accelerators by setting */
-    terminal_initialize_menu_shortcuts(get_setting());
-    gtk_action_group_add_actions(terminal->action_group, menu_items, MENUBAR_MENUITEM_COUNT, terminal);
-    gtk_ui_manager_insert_action_group(manager, terminal->action_group, 0);
-    
-    gtk_ui_manager_add_ui_from_file (manager, DATADIR "/lxterminal/menu.ui", NULL);
-    
-    terminal->menu = gtk_ui_manager_get_widget(manager, "/MenuBar");
-    
-    /* Extract accelerators from manager and add it to top level window. */
-    terminal->accel_group = gtk_ui_manager_get_accel_group(manager);
-    
-    gtk_window_add_accel_group(GTK_WINDOW(terminal->window), terminal->accel_group);
-}
-
 /* Update the accelerator that brings up the menu.
  * We have a user preference as to whether F10 (or a style-supplied alternate) is used for this purpose.
  * Technique taken from gnome-terminal. */
@@ -1828,55 +1773,34 @@ void terminal_update_menu_shortcuts(Setting * setting)
 {
     guint key;
     GdkModifierType mods;
-
     gtk_accelerator_parse(setting->new_window_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/File_NewWindow", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_FILE_NEWWINDOW, key, mods, FALSE);
     gtk_accelerator_parse(setting->new_tab_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/File_NewTab", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_FILE_NEWTAB, key, mods, FALSE);
     gtk_accelerator_parse(setting->close_tab_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/File_CloseTab", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_FILE_CLOSETAB, key, mods, FALSE);
     gtk_accelerator_parse(setting->close_window_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/File_CloseWindow", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_FILE_CLOSEWINDOW, key, mods, FALSE);
     gtk_accelerator_parse(setting->copy_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/Edit_Copy", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_EDIT_COPY, key, mods, FALSE);
     gtk_accelerator_parse(setting->paste_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/Edit_Paste", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_EDIT_PASTE, key, mods, FALSE);
     gtk_accelerator_parse(setting->zoom_in_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/Edit_ZoomIn", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_EDIT_ZOOMIN, key, mods, FALSE);
     gtk_accelerator_parse(setting->zoom_out_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/Edit_ZoomOut", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_EDIT_ZOOMOUT, key, mods, FALSE);
     gtk_accelerator_parse(setting->zoom_reset_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/Edit_ZoomReset", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_EDIT_ZOOMRESET, key, mods, FALSE);
     gtk_accelerator_parse(setting->name_tab_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/Tabs_NameTab", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_TABS_NAMETAB, key, mods, FALSE);
     gtk_accelerator_parse(setting->previous_tab_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/Tabs_PreviousTab", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_TABS_PREVIOUSTAB, key, mods, FALSE);
     gtk_accelerator_parse(setting->next_tab_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/Tabs_NextTab", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_TABS_NEXTTAB, key, mods, FALSE);
     gtk_accelerator_parse(setting->move_tab_left_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/Tabs_MoveTabLeft", key, mods, FALSE);
+    gtk_accel_map_change_entry (ACCEL_PATH_TABS_MOVELEFT, key, mods, FALSE);
     gtk_accelerator_parse(setting->move_tab_right_accel, &key, &mods);
-    gtk_accel_map_change_entry("<Actions>/MenuBar/Tabs_MoveTabRight", key, mods, FALSE);
-}
-
-/* Initialize terminal menu shortcuts. */
-void terminal_initialize_menu_shortcuts(Setting * setting)
-{
-    /* Update static array by index. */
-    menu_items[4].accelerator = setting->new_window_accel;
-    menu_items[5].accelerator = setting->new_tab_accel;
-    menu_items[7].accelerator = setting->close_tab_accel;
-    menu_items[8].accelerator = setting->close_window_accel;
-    menu_items[9].accelerator = setting->copy_accel;
-    menu_items[10].accelerator = setting->paste_accel;
-    menu_items[13].accelerator = setting->zoom_in_accel;
-    menu_items[14].accelerator = setting->zoom_out_accel;
-    menu_items[15].accelerator = setting->zoom_reset_accel;
-    menu_items[18].accelerator = setting->name_tab_accel;
-    menu_items[19].accelerator = setting->previous_tab_accel;
-    menu_items[20].accelerator = setting->next_tab_accel;
-    menu_items[21].accelerator = setting->move_tab_left_accel;
-    menu_items[22].accelerator = setting->move_tab_right_accel;
+    gtk_accel_map_change_entry (ACCEL_PATH_TABS_MOVERIGHT, key, mods, FALSE);
 }
 
 /* Main entry point. */
