@@ -13,6 +13,7 @@ static GtkWidget * create_popup_menu (void *user_data)
     menuitem.parent_menu = menu;
     menuitem.label       = _("New _Window");
     menuitem.icon_name   = "list-add";
+    menuitem.icon_alt    = "gtk-add";
     menuitem.action_name = "NewWindow";
     menuitem.activate_cb = terminal_new_window_activate_event;
     menuitem.cb_data_all = user_data;
@@ -20,6 +21,7 @@ static GtkWidget * create_popup_menu (void *user_data)
 
     menuitem.label       = _("New _Tab");
     menuitem.icon_name   = "list-add";
+    menuitem.icon_alt    = "gtk-add";
     menuitem.action_name = "NewTab";
     menuitem.activate_cb = terminal_new_tab_activate_event;
     w_gtk_menu_item_new (&menuitem);
@@ -39,12 +41,14 @@ static GtkWidget * create_popup_menu (void *user_data)
 
     menuitem.label       = _("Cop_y");
     menuitem.icon_name   = "edit-copy";
+    menuitem.icon_alt    = "gtk-copy";
     menuitem.action_name = "Copy";
     menuitem.activate_cb = terminal_copy_activate_event;
     w_gtk_menu_item_new (&menuitem);
 
     menuitem.label       = _("_Paste");
     menuitem.icon_name   = "edit-paste";
+    menuitem.icon_alt    = "gtk-paste";
     menuitem.action_name = "Paste";
     menuitem.activate_cb = terminal_paste_activate_event;
     w_gtk_menu_item_new (&menuitem);
@@ -59,6 +63,7 @@ static GtkWidget * create_popup_menu (void *user_data)
 
     menuitem.label       = _("Preference_s");
     menuitem.icon_name   = "system-run";
+    menuitem.icon_alt    = "gtk-preferences";
     menuitem.action_name = "Preferences";
     menuitem.activate_cb = terminal_preferences_dialog;
     w_gtk_menu_item_new (&menuitem);
@@ -68,18 +73,21 @@ static GtkWidget * create_popup_menu (void *user_data)
 
     menuitem.label       = _("Na_me Tab");
     menuitem.icon_name   = "dialog-information";
+    menuitem.icon_alt    = "gtk-dialog-info";
     menuitem.action_name = "NameTab";
     menuitem.activate_cb = terminal_name_tab_activate_event;
     w_gtk_menu_item_new (&menuitem);
 
     menuitem.label       = _("Pre_vious Tab");
     menuitem.icon_name   = "go-previous";
+    menuitem.icon_alt    = "gtk-go-back";
     menuitem.action_name = "PreviousTab";
     menuitem.activate_cb = terminal_previous_tab_activate_event;
     w_gtk_menu_item_new (&menuitem);
 
     menuitem.label       = _("Ne_xt Tab");
     menuitem.icon_name   = "go-next";
+    menuitem.icon_alt    = "gtk-go-forward";
     menuitem.action_name = "NextTab";
     menuitem.activate_cb = terminal_next_tab_activate_event;
     w_gtk_menu_item_new (&menuitem);
@@ -96,6 +104,7 @@ static GtkWidget * create_popup_menu (void *user_data)
 
     menuitem.label       = _("_Close Tab");
     menuitem.icon_name   = "window-close";
+    menuitem.icon_alt    = "gtk-close";
     menuitem.action_name = "CloseTab";
     menuitem.activate_cb = terminal_close_tab_activate_event;
     w_gtk_menu_item_new (&menuitem);
@@ -136,6 +145,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     menuitem.parent_menu = menu_file;
     menuitem.label       = _("_New Window");
     menuitem.icon_name   = "list-add";
+    menuitem.icon_alt    = "gtk-add";
     menuitem.action_name = "File_NewWindow";
     menuitem.accel_str   = setting->new_window_accel;
     menuitem.accel_path  = ACCEL_PATH_FILE_NEWWINDOW;
@@ -144,6 +154,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
 
     menuitem.label       = _("New T_ab");
     menuitem.icon_name   = "list-add";
+    menuitem.icon_alt    = "gtk-add";
     menuitem.action_name = "File_NewTab";
     menuitem.activate_cb = terminal_new_tab_activate_event;
     menuitem.accel_str   = setting->new_tab_accel;
@@ -155,6 +166,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
 
     menuitem.label       = _("_Close Tab");
     menuitem.icon_name   = "window-close";
+    menuitem.icon_alt    = "gtk-close";
     menuitem.action_name = "File_CloseTab";
     menuitem.accel_str   = setting->close_tab_accel;
     menuitem.accel_path  = ACCEL_PATH_FILE_CLOSETAB;
@@ -163,6 +175,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
 
     menuitem.label       = _("Close _Window");
     menuitem.icon_name   = "application-exit";
+    menuitem.icon_alt    = "gtk-quit";
     menuitem.action_name = "File_CloseWindow";
     menuitem.accel_str   = setting->close_window_accel;
     menuitem.accel_path  = ACCEL_PATH_FILE_CLOSEWINDOW;
@@ -179,6 +192,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     menuitem.parent_menu = menu_edit;
     menuitem.label       = _("Cop_y");
     menuitem.icon_name   = "edit-copy";
+    menuitem.icon_alt    = "gtk-copy";
     menuitem.action_name = "Edit_Copy";
     menuitem.accel_str   = setting->copy_accel;
     menuitem.accel_path  = ACCEL_PATH_EDIT_COPY;
@@ -187,6 +201,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
 
     menuitem.label       = _("_Paste");
     menuitem.icon_name   = "edit-paste";
+    menuitem.icon_alt    = "gtk-paste";
     menuitem.action_name = "Edit_Paste";
     menuitem.accel_str   = setting->paste_accel;
     menuitem.accel_path  = ACCEL_PATH_EDIT_PASTE;
@@ -203,6 +218,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
 
     menuitem.label       = _("Zoom _In");
     menuitem.icon_name   = "zoom-in";
+    menuitem.icon_alt    = "gtk-zoom-in";
     menuitem.action_name = "Edit_ZoomIn";
     menuitem.accel_str   = setting->zoom_in_accel;
     menuitem.accel_path  = ACCEL_PATH_EDIT_ZOOMIN;
@@ -211,6 +227,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
 
     menuitem.label       = _("Zoom O_ut");
     menuitem.icon_name   = "zoom-out";
+    menuitem.icon_alt    = "gtk-zoom-out";
     menuitem.action_name = "Edit_ZoomOut";
     menuitem.accel_str   = setting->zoom_out_accel;
     menuitem.accel_path  = ACCEL_PATH_EDIT_ZOOMOUT;
@@ -219,6 +236,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
 
     menuitem.label       = _("Zoom _Reset");
     menuitem.icon_name   = "zoom-fit-best";
+    menuitem.icon_alt    = "gtk-zoom-fit";
     menuitem.action_name = "Edit_ZoomReset";
     menuitem.accel_str   = setting->zoom_reset_accel;
     menuitem.accel_path  = ACCEL_PATH_EDIT_ZOOMRESET;
@@ -230,6 +248,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
 
     menuitem.label       = _("Preference_s");
     menuitem.icon_name   = "system-run";
+    menuitem.icon_alt    = "gtk-preferences";
     menuitem.action_name = "Edit_Preferences";
     menuitem.activate_cb = terminal_preferences_dialog;
     w_gtk_menu_item_new (&menuitem);
@@ -244,6 +263,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     menuitem.parent_menu = menu_tabs;
     menuitem.label       = _("Na_me Tab");
     menuitem.icon_name   = "dialog-information";
+    menuitem.icon_alt    = "gtk-dialog-info";
     menuitem.action_name = "Tabs_NameTab";
     menuitem.accel_str   = setting->name_tab_accel;
     menuitem.accel_path  = ACCEL_PATH_TABS_NAMETAB;
@@ -252,6 +272,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
 
     menuitem.label       = _("Pre_vious Tab");
     menuitem.icon_name   = "go-previous";
+    menuitem.icon_alt    = "gtk-go-back";
     menuitem.action_name = "Tabs_PreviousTab";
     menuitem.accel_str   = setting->previous_tab_accel;
     menuitem.accel_path  = ACCEL_PATH_TABS_PREVIOUSTAB;
@@ -260,6 +281,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
 
     menuitem.label       = _("Ne_xt Tab");
     menuitem.icon_name   = "go-next";
+    menuitem.icon_alt    = "gtk-go-forward";
     menuitem.action_name = "Tabs_NextTab";
     menuitem.accel_str   = setting->next_tab_accel;
     menuitem.accel_path  = ACCEL_PATH_TABS_NEXTTAB;
@@ -290,6 +312,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     menuitem.parent_menu = menu_help;
     menuitem.label       = _("_About");
     menuitem.icon_name   = "help-about";
+    menuitem.icon_alt    = "gtk-about";
     menuitem.action_name = "Help_About";
     menuitem.activate_cb = terminal_about_activate_event;
     w_gtk_menu_item_new (&menuitem);

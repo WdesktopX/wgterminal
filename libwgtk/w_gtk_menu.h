@@ -38,6 +38,7 @@ typedef struct _WGtkMenuItemParams
     const char * label;
     const char * radio_group;
     const char * icon_name;
+    const char * icon_alt;
     // unused
     void *accel_group;
     const char *accel_path;
@@ -56,14 +57,15 @@ typedef struct _WGtkMenuItemParams
 {
     GtkWidget * parent_menu;
     GtkWidget * submenu;
-    char * label;           /* empty = separator  */
-    char * icon_name;
+    const char * label;           /* empty = separator  */
+    const char * icon_name;
+    const char * icon_alt;
     void * activate_cb;     /* callback func for the activate signal */
     void * cb_data;         /* callback data      */
     void * cb_data_all;     /* callback for all signals */
-    char * accel_str;       /* i.e: "<Control>n"  */
+    const char * accel_str;       /* i.e: "<Control>n"  */
     GtkAccelGroup * accel_group;
-    char * accel_path;
+    const char * accel_path;
     gboolean checkbox;
     gboolean check_state;
     const char *radio_group;

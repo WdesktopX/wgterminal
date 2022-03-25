@@ -18,6 +18,28 @@
 #include "w_gtk.h"
 #include "w_gtk_menu.h"
 
+
+static const char * get_valid_icon_name (const char *icon1, const char *icon2)
+{
+    GtkIconTheme *icon_theme = gtk_icon_theme_get_default ();
+    if (gtk_icon_theme_has_icon (icon_theme, icon1)) {
+        return icon1;
+    } else if (strncmp (icon1, "gtk-", 4) == 0) {
+        return icon1;
+    } else if (icon2 && *icon2) {
+        if (gtk_icon_theme_has_icon (icon_theme, icon2)) {
+            return icon2;
+        } else if (strncmp (icon2, "gtk-", 4) == 0) {
+            return icon2;
+        }
+        fprintf (stderr, "%s was not found in icon theme", icon2);
+    } else {
+        fprintf (stderr, "%s was not found in icon theme", icon1);
+    }
+    return NULL;
+}
+
+
 #if defined(USE_GTK_APPLICATION)
 
 static GSimpleAction * new_action (GtkApplication * gtk_app,  /* required */
@@ -208,7 +230,12 @@ GtkMenuItem * w_gtk_menu_item_new (WGtkMenuItemParams * params)
             break;
         case 1: /* image */
             action = gtk_action_new (params->action_name, params->label, params->tooltip, NULL);
-            gtk_action_set_icon_name (action, params->icon_name);
+            tmp = (void*) get_valid_icon_name (params->icon_name, params->icon_alt);
+            if (tmp) {
+                gtk_action_set_icon_name (action, (char*)tmp);
+            } else {
+                gtk_action_set_icon_name (action, params->icon_name);
+            }
             item = gtk_action_create_menu_item (action);
             break;
         case 2: /* check */
@@ -302,6 +329,7 @@ GtkMenuItem * w_gtk_menu_item_new (WGtkMenuItemParams * params)
     GtkAccelGroup * accel_group = params->accel_group;
     GtkWidget * parent_menu     = params->parent_menu;
     void * cb_data_all          = params->cb_data_all;
+    GtkWidget *img;
     void *tmp;
     GSList * list = NULL;
     const char *radio_group = params->radio_group;
@@ -324,7 +352,12 @@ GtkMenuItem * w_gtk_menu_item_new (WGtkMenuItemParams * params)
             break;
         case 1: /* image */
             item = gtk_image_menu_item_new_with_mnemonic (params->label);
-            GtkWidget *img = w_gtk_image_new_from_icon_name (params->icon_name, GTK_ICON_SIZE_MENU);
+            tmp = (void*) get_valid_icon_name (params->icon_name, params->icon_alt);
+            if (tmp) {
+                img = w_gtk_image_new_from_icon_name ((char*)tmp, GTK_ICON_SIZE_MENU);
+            } else {
+                img = w_gtk_image_new_from_icon_name (params->icon_name, GTK_ICON_SIZE_MENU);
+            }
             gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), img);
             break;
         case 2: /* check */
