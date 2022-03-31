@@ -167,18 +167,10 @@ static void preferences_dialog_tab_position_changed_event(GtkComboBox * widget, 
     const char * p = NULL;
     switch (gtk_combo_box_get_active(widget))
     {
-        case 0:
-            p = "top";
-            break;
-        case 1:
-            p = "bottom";
-            break;
-        case 2:
-            p = "left";
-            break;
-        case 3:
-            p = "right";
-            break;
+        case 0: p = "top";    break;
+        case 1: p = "bottom"; break;
+        case 2: p = "left";   break;
+        case 3: p = "right";  break;
     }
     if (p != NULL)
     {
@@ -198,22 +190,10 @@ static void preferences_dialog_int_value_changed_event(GtkSpinButton * widget, g
  * These have to match the order in the .glade file. */
 gint terminal_tab_get_position_id(gchar * position)
 {
-    if (strcmp(position, "bottom") == 0)
-    {
-        return 1;
-    }
-    else if (strcmp(position, "left") == 0)
-    {
-        return 2;
-    }
-    else if (strcmp(position, "right") == 0)
-    {
-        return 3;
-    }
-    else
-    {
-        return 0;
-    }
+    if (strcmp(position, "bottom") == 0)     return 1;
+    else if (strcmp(position, "left") == 0)  return 2;
+    else if (strcmp(position, "right") == 0) return 3;
+    else                                     return 0;
 }
 
 /* Generic "toggled" handler for GtkToggleButton events */
