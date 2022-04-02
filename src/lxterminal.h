@@ -29,6 +29,7 @@
 #else
 #define _(x) (x)
 #define N_(x) (x)
+#define gettext(x) (x)
 #endif
 
 #include "setting.h"

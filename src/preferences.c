@@ -28,8 +28,7 @@
 #include "lxterminal.h"
 #include "setting.h"
 #include "preferences.h"
-
-GtkBuilder *builder;
+#include "preferences-dialog.c"
 
 gint preset_custom_id;
 
@@ -60,8 +59,8 @@ static gboolean preferences_dialog_background_color_set_event(GtkWidget * widget
     }
 #endif
 
-    GtkComboBox *w = GTK_COMBO_BOX(gtk_builder_get_object(builder, "combobox_color_preset"));
-    gtk_combo_box_set_active(w, preset_custom_id);
+    GtkWidget *combo = PREFS_GET_OBJECT("combobox_color_preset");
+    gtk_combo_box_set_active (GTK_COMBO_BOX(combo), preset_custom_id);
     setting->color_preset = color_presets[preset_custom_id].name;
     return FALSE;
 }
@@ -75,8 +74,8 @@ static gboolean preferences_dialog_foreground_color_set_event(GtkWidget * widget
     gtk_color_button_get_color(GTK_COLOR_BUTTON(widget), &setting->foreground_color);
 #endif
 
-    GtkComboBox *w = GTK_COMBO_BOX(gtk_builder_get_object(builder, "combobox_color_preset"));
-    gtk_combo_box_set_active(w, preset_custom_id);
+    GtkWidget *combo = PREFS_GET_OBJECT("combobox_color_preset");
+    gtk_combo_box_set_active (GTK_COMBO_BOX(combo), preset_custom_id);
     setting->color_preset = color_presets[preset_custom_id].name;
     return FALSE;
 }
@@ -85,20 +84,22 @@ static gboolean preferences_dialog_foreground_color_set_event(GtkWidget * widget
 static gboolean preferences_dialog_palette_color_set_event(GtkColorButton * widget, Setting * setting)
 {
     int i;
+    GtkWidget *w;
+    char color_x[50];
 
-    for (i=0;i<16;i++) {
-        gchar *object_key = g_strdup_printf("color_%i", i);
-    	GtkColorButton *w = GTK_COLOR_BUTTON(gtk_builder_get_object(builder, object_key));
+    for (i=0;i<16;i++)
+    {
+        snprintf (color_x, sizeof(color_x), "color_%i", i);
+        w = PREFS_GET_OBJECT(color_x);
 #if VTE_CHECK_VERSION (0, 38, 0)
         gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(w), &setting->palette_color[i]);
 #else
         gtk_color_button_get_color(GTK_COLOR_BUTTON(w), &setting->palette_color[i]);
 #endif
-	g_free(object_key);
     }
 
-    GtkComboBox *w = GTK_COMBO_BOX(gtk_builder_get_object(builder, "combobox_color_preset"));
-    gtk_combo_box_set_active(w, preset_custom_id);
+    w = PREFS_GET_OBJECT("combobox_color_preset");
+    gtk_combo_box_set_active (GTK_COMBO_BOX(w), preset_custom_id);
     setting->color_preset = color_presets[preset_custom_id].name;
     return FALSE;
 }
@@ -117,7 +118,7 @@ static gboolean preferences_dialog_palette_preset_changed_event(GtkComboBox * wi
 
     setting->color_preset = color_presets[active].name;
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "background_color"));
+    w = PREFS_GET_OBJECT("background_color");
 #if VTE_CHECK_VERSION (0, 38, 0)
     gdk_rgba_parse(&setting->background_color, color_presets[active].background_color);
     gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &setting->background_color);
@@ -128,7 +129,7 @@ static gboolean preferences_dialog_palette_preset_changed_event(GtkComboBox * wi
     gtk_color_button_set_alpha(GTK_COLOR_BUTTON(w), 65535);
 #endif
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "foreground_color"));
+    w = PREFS_GET_OBJECT("foreground_color");
 #if VTE_CHECK_VERSION (0, 38, 0)
     gdk_rgba_parse(&setting->foreground_color, color_presets[active].foreground_color);
     gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &setting->foreground_color);
@@ -139,7 +140,7 @@ static gboolean preferences_dialog_palette_preset_changed_event(GtkComboBox * wi
 
     for (i=0;i<16;i++) {
         gchar *object_key = g_strdup_printf("color_%i", i);
-        w = GTK_WIDGET(gtk_builder_get_object(builder, object_key));
+        w = PREFS_GET_OBJECT(object_key);
 #if VTE_CHECK_VERSION (0, 38, 0)
         gdk_rgba_parse(&setting->palette_color[i], color_presets[active].palette[i]);
         gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &setting->palette_color[i]);
@@ -263,18 +264,9 @@ void terminal_preferences_dialog(GtkAction * action, LXTerminal * terminal)
     int i;
     Setting * setting = copy_setting(get_setting());
 
-    builder = gtk_builder_new();
-    if ( ! gtk_builder_add_from_file(builder, DATADIR "/lxterminal/lxterminal-preferences.ui", NULL))
-    {
-        g_object_unref(builder);
-        return;
-    }
+    create_preferences_dialog (terminal->window);
 
-    GtkDialog * dialog = GTK_DIALOG(gtk_builder_get_object(builder, "lxterminal_preferences"));
-    gtk_window_set_title(GTK_WINDOW(dialog), _("LXTerminal"));
-    gtk_window_set_icon_from_file(GTK_WINDOW(dialog), DATADIR "/icons/hicolor/128x128/apps/lxterminal.png", NULL);
-
-    GtkWidget * w = GTK_WIDGET(gtk_builder_get_object(builder, "terminal_font"));
+    GtkWidget * w = PREFS_GET_OBJECT("terminal_font");
 #if GTK_CHECK_VERSION (3, 2, 0)
     gtk_font_chooser_set_font(GTK_FONT_CHOOSER(w), setting->font_name);
 #else
@@ -282,7 +274,7 @@ void terminal_preferences_dialog(GtkAction * action, LXTerminal * terminal)
 #endif
     g_signal_connect(G_OBJECT(w), "font-set", G_CALLBACK(preferences_dialog_font_set_event), setting);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "background_color"));
+    w = PREFS_GET_OBJECT("background_color");
 #if VTE_CHECK_VERSION (0, 38, 0)
     gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &setting->background_color);
 #else
@@ -292,7 +284,7 @@ void terminal_preferences_dialog(GtkAction * action, LXTerminal * terminal)
     g_signal_connect(G_OBJECT(w), "color-set", 
         G_CALLBACK(preferences_dialog_background_color_set_event), setting);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "foreground_color"));
+    w = PREFS_GET_OBJECT("foreground_color");
 #if VTE_CHECK_VERSION (0, 38, 0)
     gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &setting->foreground_color);
 #else
@@ -303,7 +295,7 @@ void terminal_preferences_dialog(GtkAction * action, LXTerminal * terminal)
 
     for (i=0; i<16; i++) {
         gchar *object_key = g_strdup_printf("color_%i", i);
-        w = GTK_WIDGET(gtk_builder_get_object(builder, object_key));
+        w = PREFS_GET_OBJECT(object_key);
 #if VTE_CHECK_VERSION (0, 38, 0)
         gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &setting->palette_color[i]);
 #else
@@ -314,136 +306,136 @@ void terminal_preferences_dialog(GtkAction * action, LXTerminal * terminal)
 	g_free(object_key);
     }
 
-    GtkListStore *w3 = GTK_LIST_STORE(gtk_builder_get_object(builder, "values_color_presets"));
-    GtkComboBox *w2 = GTK_COMBO_BOX(gtk_builder_get_object(builder, "combobox_color_preset"));
+    GtkWidget *combo = PREFS_GET_OBJECT("combobox_color_preset");
     gboolean preset_is_set = FALSE;
-    for (i=0; ; i++) {
-        gtk_list_store_insert_with_values (w3, NULL, -1, 0, color_presets[i].name, -1);
+    for (i=0; ; i++)
+    {
+        gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(combo), color_presets[i].name);
 
         if (g_strcmp0(color_presets[i].name, setting->color_preset) == 0) {
-            gtk_combo_box_set_active(w2, i);
+            gtk_combo_box_set_active (GTK_COMBO_BOX(combo), i);
             preset_is_set = TRUE;
         }
 
         if (g_strcmp0(color_presets[i].name, "Custom") == 0) {
             if (preset_is_set == FALSE) {
-                gtk_combo_box_set_active(w2, i);
+                gtk_combo_box_set_active (GTK_COMBO_BOX(combo), i);
             }
             preset_custom_id = i;
             break;
         }
     }
 
-    g_signal_connect(G_OBJECT(w2), "changed",
+    g_signal_connect(G_OBJECT(combo), "changed",
             G_CALLBACK(preferences_dialog_palette_preset_changed_event), setting);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "allow_bold"));
+    w = PREFS_GET_OBJECT("allow_bold");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), ! setting->disallow_bold);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_allow_bold_toggled_event), setting);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "bold_bright"));
+    w = PREFS_GET_OBJECT("bold_bright");
 #if VTE_CHECK_VERSION (0, 52, 0)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->bold_bright);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->bold_bright);
 #else
     gtk_widget_hide(w);
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "label_bold_bright"));
+    w = PREFS_GET_OBJECT("label_bold_bright");
     gtk_widget_hide(w);
 #endif
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "cursor_blink"));
+    w = PREFS_GET_OBJECT("cursor_blink");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->cursor_blink);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->cursor_blink);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "cursor_style_block"));
+    w = PREFS_GET_OBJECT("cursor_style_block");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), ! setting->cursor_underline);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "cursor_style_underline"));
+    w = PREFS_GET_OBJECT("cursor_style_underline");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->cursor_underline);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->cursor_underline);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "audible_bell"));
+    w = PREFS_GET_OBJECT("audible_bell");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->audible_bell);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->audible_bell);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "visual_bell"));
+    w = PREFS_GET_OBJECT("visual_bell");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->visual_bell);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->visual_bell);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "tab_position"));
+    w = PREFS_GET_OBJECT("tab_position");
     gtk_combo_box_set_active(GTK_COMBO_BOX(w), terminal_tab_get_position_id(setting->tab_position));
     g_signal_connect(G_OBJECT(w), "changed", 
         G_CALLBACK(preferences_dialog_tab_position_changed_event), setting);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "scrollback_lines"));
+    w = PREFS_GET_OBJECT("scrollback_lines");
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), setting->scrollback);
     g_signal_connect(G_OBJECT(w), "value-changed", 
         G_CALLBACK(preferences_dialog_int_value_changed_event), &setting->scrollback);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "geometry_columns"));
+    w = PREFS_GET_OBJECT("geometry_columns");
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), setting->geometry_columns);
     g_signal_connect(G_OBJECT(w), "value-changed", 
         G_CALLBACK(preferences_dialog_int_value_changed_event), &setting->geometry_columns);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "geometry_rows"));
+    w = PREFS_GET_OBJECT("geometry_rows");
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), setting->geometry_rows);
     g_signal_connect(G_OBJECT(w), "value-changed", 
         G_CALLBACK(preferences_dialog_int_value_changed_event), &setting->geometry_rows);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "hide_scroll_bar"));
+    w = PREFS_GET_OBJECT("hide_scroll_bar");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->hide_scroll_bar);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->hide_scroll_bar);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "hide_menu_bar"));
+    w = PREFS_GET_OBJECT("hide_menu_bar");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->hide_menu_bar);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->hide_menu_bar);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "hide_close_button"));
+    w = PREFS_GET_OBJECT("hide_close_button");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->hide_close_button);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->hide_close_button);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "hide_pointer"));
+    w = PREFS_GET_OBJECT("hide_pointer");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->hide_pointer);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->hide_pointer);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "select_by_word"));
+    w = PREFS_GET_OBJECT("select_by_word");
     gtk_entry_set_text(GTK_ENTRY(w), setting->word_selection_characters);
     g_signal_connect(G_OBJECT(w), "focus-out-event", 
         G_CALLBACK(preferences_dialog_generic_focus_out_event), &setting->word_selection_characters);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "disable_f10"));
+    w = PREFS_GET_OBJECT("disable_f10");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->disable_f10);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->disable_f10);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "disable_alt"));
+    w = PREFS_GET_OBJECT("disable_alt");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->disable_alt);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->disable_alt);
     
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "disable_confirm"));
+    w = PREFS_GET_OBJECT("disable_confirm");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), setting->disable_confirm);
     g_signal_connect(G_OBJECT(w), "toggled", 
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->disable_confirm);
 
-    w = GTK_WIDGET(gtk_builder_get_object(builder, "tab_width"));
+    w = PREFS_GET_OBJECT("tab_width");
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), setting->tab_width);
     g_signal_connect(G_OBJECT(w), "value-changed", 
         G_CALLBACK(preferences_dialog_int_value_changed_event), &setting->tab_width);
 
     /* Shortcuts */
 #define PREF_SETUP_SHORTCUT(OBJ, VAR) \
-    w = GTK_WIDGET(gtk_builder_get_object(builder, OBJ)); \
+    w = PREFS_GET_OBJECT(OBJ); \
     accel_set_label(VAR, w); \
     g_signal_connect(G_OBJECT(w), "key-press-event", \
         G_CALLBACK(preferences_dialog_shortcut_key_press_event), &VAR); \
@@ -463,13 +455,9 @@ void terminal_preferences_dialog(GtkAction * action, LXTerminal * terminal)
     PREF_SETUP_SHORTCUT(ZOOM_OUT_ACCEL, setting->zoom_out_accel)
     PREF_SETUP_SHORTCUT(ZOOM_RESET_ACCEL, setting->zoom_reset_accel)
 
-    gtk_window_set_modal(GTK_WINDOW(GTK_DIALOG(dialog)), TRUE);
-    gtk_window_set_transient_for(GTK_WINDOW(GTK_DIALOG(dialog)), 
-        GTK_WINDOW(terminal->window));
-
-    int result = gtk_dialog_run(dialog);
+    int result = gtk_dialog_run (GTK_DIALOG(preferences_dlg));
     /* Dismiss dialog. */
-    gtk_widget_destroy(GTK_WIDGET(dialog));
+    gtk_widget_destroy(GTK_WIDGET(preferences_dlg));
     if (result == GTK_RESPONSE_OK)
     {
         set_setting(setting);
@@ -480,6 +468,4 @@ void terminal_preferences_dialog(GtkAction * action, LXTerminal * terminal)
     {
         free_setting(&setting);
     }
-
-    g_object_unref(builder);
 }
