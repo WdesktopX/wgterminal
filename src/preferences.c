@@ -332,8 +332,6 @@ void terminal_preferences_dialog(GtkMenuItem * action, LXTerminal * terminal)
         G_CALLBACK(preferences_dialog_generic_toggled_event), &setting->bold_bright);
 #else
     gtk_widget_hide(w);
-    w = PREFS_GET_OBJECT("label_bold_bright");
-    gtk_widget_hide(w);
 #endif
 
     w = PREFS_GET_OBJECT("cursor_blink");

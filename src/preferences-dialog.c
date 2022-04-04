@@ -8,8 +8,11 @@
 
 static void add2table (GtkWidget *table, GtkWidget *w1, GtkWidget *w2, int *row)
 {
-    // w1 is usually a GtkLabel, w2 is a combo/entry/button/etc
+    if (!w1 && !w2) {
+        w1 = gtk_label_new ("");
+    }
     if (w1 && w2) {
+        // w1 is a GtkLabel, w2 is a combo/entry/button/etc
         // |         label xxxvaluexxxx |
         gtk_grid_attach (GTK_GRID(table), w1, 0, *row, 1, 1);
         gtk_grid_attach (GTK_GRID(table), w2, 1, *row, 1, 1);
@@ -17,6 +20,9 @@ static void add2table (GtkWidget *table, GtkWidget *w1, GtkWidget *w2, int *row)
     } else if (w1 && !w2) {
         // widget use both columns
         gtk_grid_attach (GTK_GRID(table), w1, 0, *row, 2, 1);
+    } else if (w2) {
+        // only 2nd column
+        gtk_grid_attach (GTK_GRID(table), w2, 1, *row, 1, 1);
     }
     *row = *row + 1;
 }
@@ -72,6 +78,8 @@ void create_preferences_dialog (GtkWidget * parent_window)
     PREFS_SET_OBJECT_ID("foreground_color", button);
     add2table (table[0], label, button, &i);
 
+    add2table (table[0], NULL, NULL, &i);
+
     label = gtk_label_new (_("Palette"));
     combo = gtk_combo_box_text_new ();
     PREFS_SET_OBJECT_ID("combobox_color_preset", combo);
@@ -114,21 +122,19 @@ void create_preferences_dialog (GtkWidget * parent_window)
         y++;
     }
 
-    label = gtk_label_new (_("Allow bold font"));
-    checkbox = gtk_check_button_new ();
+    add2table (table[0], NULL, NULL, &i);
+
+    checkbox = gtk_check_button_new_with_label (_("Allow bold font"));
     PREFS_SET_OBJECT_ID("allow_bold", checkbox);
-    add2table (table[0], label, checkbox, &i);
+    add2table (table[0], NULL, checkbox, &i);
 
-    label = gtk_label_new (_("Bold is bright"));
-    checkbox = gtk_check_button_new ();
-    PREFS_SET_OBJECT_ID("label_bold_bright", label);
+    checkbox = gtk_check_button_new_with_label (_("Bold is bright"));
     PREFS_SET_OBJECT_ID("bold_bright", checkbox);
-    add2table (table[0], label, checkbox, &i);
+    add2table (table[0], NULL, checkbox, &i);
 
-    label = gtk_label_new (_("Cursor blink"));
-    checkbox = gtk_check_button_new ();
+    checkbox = gtk_check_button_new_with_label (_("Cursor blink"));
     PREFS_SET_OBJECT_ID("cursor_blink", checkbox);
-    add2table (table[0], label, checkbox, &i);
+    add2table (table[0], NULL, checkbox, &i);
 
     label = gtk_label_new (_("Cursor style"));
     vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
@@ -144,15 +150,13 @@ void create_preferences_dialog (GtkWidget * parent_window)
     gtk_box_pack_start (GTK_BOX(vbox), button, FALSE, FALSE, 0);
     PREFS_SET_OBJECT_ID("cursor_style_underline", button);
 
-    label = gtk_label_new (_("Audible bell"));
-    checkbox = gtk_check_button_new ();
+    checkbox = gtk_check_button_new_with_label (_("Audible bell"));
     PREFS_SET_OBJECT_ID("audible_bell", checkbox);
-    add2table (table[0], label, checkbox, &i);
+    add2table (table[0], NULL, checkbox, &i);;
 
-    label = gtk_label_new (_("Visual bell"));
-    checkbox = gtk_check_button_new ();
+    checkbox = gtk_check_button_new_with_label (_("Visual bell"));
     PREFS_SET_OBJECT_ID("visual_bell", checkbox);
-    add2table (table[0], label, checkbox, &i);
+    add2table (table[0], NULL, checkbox, &i);
 
     //==== Tab 1 - Advanced ====
 
@@ -194,48 +198,12 @@ void create_preferences_dialog (GtkWidget * parent_window)
     PREFS_SET_OBJECT_ID("geometry_rows", entry);
     gtk_box_pack_start (GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 
-    label = gtk_label_new (_("Hide scroll bar"));
-    checkbox = gtk_check_button_new ();
-    add2table (table[1], label, checkbox, &i);
-    PREFS_SET_OBJECT_ID("hide_scroll_bar", checkbox);
+    add2table (table[1], NULL, NULL, &i);
 
-    label = gtk_label_new (_("Hide menu bar"));
-    checkbox = gtk_check_button_new ();
-    add2table (table[1], label, checkbox, &i);
-    PREFS_SET_OBJECT_ID("hide_menu_bar", checkbox);
-
-    label = gtk_label_new (_("Hide Close buttons"));
-    checkbox = gtk_check_button_new ();
-    add2table (table[1], label, checkbox, &i);
-    PREFS_SET_OBJECT_ID("hide_close_button", checkbox);
-
-    label = gtk_label_new (_("Hide mouse pointer"));
-    checkbox = gtk_check_button_new ();
-    add2table (table[1], label, checkbox, &i);
-    PREFS_SET_OBJECT_ID("hide_pointer", checkbox);
-
-    label = gtk_label_new ("");
-    add2table (table[1], label, NULL, &i);
-    
     label = gtk_label_new (_("Select-by-word characters"));
     entry = gtk_entry_new ();
     add2table (table[1], label, entry, &i);
     PREFS_SET_OBJECT_ID("select_by_word", entry);
-
-    label = gtk_label_new (_("Disable menu shortcut key (F10 by default)"));
-    checkbox = gtk_check_button_new ();
-    add2table (table[1], label, checkbox, &i);
-    PREFS_SET_OBJECT_ID("disable_f10", checkbox);
-
-    label = gtk_label_new (_("Disable using Alt-n for tabs and menu"));
-    checkbox = gtk_check_button_new ();
-    add2table (table[1], label, checkbox, &i);
-    PREFS_SET_OBJECT_ID("disable_alt", checkbox);
-
-    label = gtk_label_new (_("Disable confirmation before closing a window with multiple tabs"));
-    checkbox = gtk_check_button_new ();
-    add2table (table[1], label, checkbox, &i);
-    PREFS_SET_OBJECT_ID("disable_confirm", checkbox);
 
     label = gtk_label_new (_("Tab width"));
     entry = gtk_spin_button_new_with_range (0, 1000, 1);
@@ -243,6 +211,36 @@ void create_preferences_dialog (GtkWidget * parent_window)
     PREFS_SET_OBJECT_ID("tab_width", entry);
     gtk_entry_set_width_chars (GTK_ENTRY(entry), 4);
     gtk_spin_button_set_value (GTK_SPIN_BUTTON(entry), 100);
+
+    add2table (table[1], NULL, NULL, &i);
+
+    checkbox = gtk_check_button_new_with_label (_("Hide scroll bar"));
+    add2table (table[1], NULL, checkbox, &i);
+    PREFS_SET_OBJECT_ID("hide_scroll_bar", checkbox);
+
+    checkbox = gtk_check_button_new_with_label (_("Hide menu bar"));
+    add2table (table[1], NULL, checkbox, &i);
+    PREFS_SET_OBJECT_ID("hide_menu_bar", checkbox);
+
+    checkbox = gtk_check_button_new_with_label (_("Hide Close buttons"));
+    add2table (table[1], NULL, checkbox, &i);
+    PREFS_SET_OBJECT_ID("hide_close_button", checkbox);
+
+    checkbox = gtk_check_button_new_with_label (_("Hide mouse pointer"));
+    add2table (table[1], NULL, checkbox, &i);
+    PREFS_SET_OBJECT_ID("hide_pointer", checkbox);
+
+    checkbox = gtk_check_button_new_with_label (_("Disable menu shortcut key (F10 by default)"));
+    add2table (table[1], NULL, checkbox, &i);
+    PREFS_SET_OBJECT_ID("disable_f10", checkbox);
+
+    checkbox = gtk_check_button_new_with_label (_("Disable using Alt-n for tabs and menu"));
+    add2table (table[1], NULL, checkbox, &i);
+    PREFS_SET_OBJECT_ID("disable_alt", checkbox);
+
+    checkbox = gtk_check_button_new_with_label (_("Disable confirmation before closing a window with multiple tabs"));
+    add2table (table[1], NULL, checkbox, &i);
+    PREFS_SET_OBJECT_ID("disable_confirm", checkbox);
 
 
     //==== Tab 2 - Shortcuts ====
