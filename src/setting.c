@@ -112,7 +112,6 @@ void print_setting()
 #endif
     printf("Foreground color: %s\n", p);
     g_free(p);
-    printf("Disallow bolding by VTE: %i\n", setting->disallow_bold);
 #if VTE_CHECK_VERSION (0, 52, 0)
     printf("Bold is bright: %i\n", setting->bold_bright);
 #endif
@@ -201,7 +200,6 @@ void save_setting()
     g_key_file_set_string(setting->keyfile, GENERAL_GROUP, COLOR_PRESET, setting->color_preset);
 
     g_free(p);
-    g_key_file_set_boolean(setting->keyfile, GENERAL_GROUP, DISALLOW_BOLD, setting->disallow_bold);
 #if VTE_CHECK_VERSION (0, 52, 0)
     g_key_file_set_boolean(setting->keyfile, GENERAL_GROUP, BOLD_BRIGHT, setting->bold_bright);
 #endif
@@ -411,7 +409,6 @@ color_preset_does_not_exist:
             }
         }
 
-        setting->disallow_bold = g_key_file_get_boolean(setting->keyfile, GENERAL_GROUP, DISALLOW_BOLD, NULL);
 #if VTE_CHECK_VERSION (0, 52, 0)
         setting->bold_bright = g_key_file_get_boolean(setting->keyfile, GENERAL_GROUP, BOLD_BRIGHT, NULL);
 #endif

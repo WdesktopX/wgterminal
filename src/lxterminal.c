@@ -1034,7 +1034,7 @@ static void terminal_settings_apply_to_term(LXTerminal * terminal, Term * term)
 #endif
     vte_terminal_set_font_scale(VTE_TERMINAL(term->vte), terminal->scale);
     vte_terminal_set_scrollback_lines(VTE_TERMINAL(term->vte), setting->scrollback);
-    vte_terminal_set_allow_bold(VTE_TERMINAL(term->vte), ! setting->disallow_bold);
+    vte_terminal_set_allow_bold(VTE_TERMINAL(term->vte), TRUE);
 #if VTE_CHECK_VERSION (0, 52, 0)
     vte_terminal_set_bold_is_bright(VTE_TERMINAL(term->vte), setting->bold_bright);
 #endif

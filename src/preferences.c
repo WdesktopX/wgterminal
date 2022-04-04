@@ -147,10 +147,6 @@ static void create_preferences_dialog (GtkWidget * parent_window)
 
     add2table (table[0], NULL, NULL, &i);
 
-    checkbox = gtk_check_button_new_with_label (_("Allow bold font"));
-    PREFS_SET_OBJECT_ID("allow_bold", checkbox);
-    add2table (table[0], NULL, checkbox, &i);
-
     checkbox = gtk_check_button_new_with_label (_("Bold is bright"));
     PREFS_SET_OBJECT_ID("bold_bright", checkbox);
     add2table (table[0], NULL, checkbox, &i);
@@ -431,13 +427,6 @@ static gboolean preferences_dialog_palette_preset_changed_event(GtkComboBox * wi
     return FALSE;
 }
 
-/* Handler for "toggled" signal on Allow Bold toggle button.
- * Use the complement so the default is FALSE. */
-static void preferences_dialog_allow_bold_toggled_event(GtkToggleButton * widget, Setting * setting)
-{
-    setting->disallow_bold = ! gtk_toggle_button_get_active(widget);
-}
-
 /* Handler for "changed" signal on Tab Position combo box. */
 static void preferences_dialog_tab_position_changed_event(GtkComboBox * widget, Setting * setting)
 {
@@ -610,11 +599,6 @@ void terminal_preferences_dialog(GtkMenuItem * action, LXTerminal * terminal)
 
     g_signal_connect(G_OBJECT(combo), "changed",
             G_CALLBACK(preferences_dialog_palette_preset_changed_event), setting);
-
-    w = PREFS_GET_OBJECT("allow_bold");
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), ! setting->disallow_bold);
-    g_signal_connect(G_OBJECT(w), "toggled", 
-        G_CALLBACK(preferences_dialog_allow_bold_toggled_event), setting);
 
     w = PREFS_GET_OBJECT("bold_bright");
 #if VTE_CHECK_VERSION (0, 52, 0)
