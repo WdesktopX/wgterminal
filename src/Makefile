@@ -4,7 +4,7 @@ APP  = lxterminal
 WGTK = ../libwgtk
 
 WOBJ = $(WGTK)/w_gtk.o $(WGTK)/w_gtk_menu.o
-OBJS = $(WOBJ) lxterminal.o preferences.o preferences-dialog.o setting.o unixsocket.o 
+OBJS = $(WOBJ) lxterminal.o preferences.o setting.o unixsocket.o 
 
 LDFLAGS += 
 #CPPFLAGS += -I..

@@ -28,16 +28,9 @@
 #include "lxterminal.h"
 #include "setting.h"
 
-
 //#include "preferences.h"
 extern void terminal_preferences_dialog (GtkMenuItem * action, LXTerminal * terminal);
 extern gint terminal_tab_get_position_id (gchar * position);
-//preferences-dialog.c
-void create_preferences_dialog (GtkWidget * parent_window);
-extern GtkWidget *preferences_dlg;
-#define PREFS_SET_OBJECT_ID(id,obj) g_object_set_data(G_OBJECT(preferences_dlg),id,obj)
-#define PREFS_GET_OBJECT(id)        g_object_get_data(G_OBJECT(preferences_dlg),id)
-
 
 //#include "unixsocket.h"
 extern gboolean lxterminal_socket_initialize(LXTermWindow* lxtermwin, gint argc, gchar** argv);
