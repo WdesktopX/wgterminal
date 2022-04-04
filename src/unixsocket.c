@@ -17,18 +17,14 @@
  *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  *      MA 02110-1301, USA.
  */
+ 
+#include "common.h"
 
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <string.h>
-#include <glib.h>
-#include <gtk/gtk.h>
-
-#include "lxterminal.h"
-#include "unixsocket.h"
 
 typedef struct _client_info {
     LXTermWindow * lxtermwin;

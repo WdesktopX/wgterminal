@@ -6,11 +6,7 @@
 
 // included by preferences.c
 
-#include "w_gtk.h"
-
-static GtkWidget *preferences_dlg;
-#define PREFS_SET_OBJECT_ID(id,obj) g_object_set_data(G_OBJECT(preferences_dlg),id,obj)
-#define PREFS_GET_OBJECT(id)        g_object_get_data(G_OBJECT(preferences_dlg),id)
+#include "common.h"
 
 
 static void add2table (GtkWidget *table, GtkWidget *w1, GtkWidget *w2, int *row)

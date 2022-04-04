@@ -18,14 +18,10 @@
  *      MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "common.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include "gtkcompat.h"
-#include <vte/vte.h>
 #include <langinfo.h>
 #include <locale.h>
 #include <sys/stat.h>
@@ -36,11 +32,6 @@
 #define PCRE2_CODE_UNIT_WIDTH 0
 #include <pcre2.h>
 #endif
-
-#include "lxterminal.h"
-#include "setting.h"
-#include "preferences.h"
-#include "unixsocket.h"
 
 /* Utilities. */
 static void terminal_get_border(Term * term, GtkBorder * border);

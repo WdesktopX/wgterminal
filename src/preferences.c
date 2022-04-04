@@ -18,18 +18,9 @@
  *      MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "common.h"
 
-#include "gtkcompat.h"
-#include <vte/vte.h>
-
-#include "lxterminal.h"
-#include "setting.h"
-#include "preferences.h"
-#include "preferences-dialog.c"
-
+GtkWidget *preferences_dlg;
 gint preset_custom_id;
 
 /* Handler for "font-set" signal on Terminal Font font button. */
@@ -259,7 +250,7 @@ static void accel_set_label(const gchar * name, GtkWidget * w)
 }
 
 /* Initialize and display the preferences dialog. */
-void terminal_preferences_dialog(GtkAction * action, LXTerminal * terminal)
+void terminal_preferences_dialog(GtkMenuItem * action, LXTerminal * terminal)
 {
     int i;
     Setting * setting = copy_setting(get_setting());

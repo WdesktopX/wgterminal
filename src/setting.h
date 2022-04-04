@@ -21,10 +21,6 @@
 #ifndef LXTERMINAL_SETTING_H
 #define LXTERMINAL_SETTING_H
 
-#include <string.h>
-#include <gtk/gtk.h>
-#include <vte/vte.h>
-
 #define GENERAL_GROUP "general"
 #define FONT_NAME "fontname"
 #define FG_COLOR "fgcolor"

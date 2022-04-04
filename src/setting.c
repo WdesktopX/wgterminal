@@ -18,22 +18,13 @@
  *      MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "common.h"
 
-#include <glib.h>
-#include <gtk/gtk.h>
-#include <glib/gstdio.h>
-#include <vte/vte.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
-
-#include "setting.h"
-
 
 /* Single copy setting*/
 Setting * setting;
