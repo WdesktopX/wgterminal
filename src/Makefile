@@ -1,14 +1,15 @@
 include ../config.mk
 
 APP  = lxterminal
-# ls *.c | sed "s%\.c%.o%g" | tr "\n" " " >> Makefile
-# remove tab.c 
-OBJS = lxterminal.o preferences.o preferences-dialog.o setting.o unixsocket.o 
+WGTK = ../libwgtk
+
+WOBJ = $(WGTK)/w_gtk.o $(WGTK)/w_gtk_menu.o
+OBJS = $(WOBJ) lxterminal.o preferences.o preferences-dialog.o setting.o unixsocket.o 
 
 LDFLAGS += 
 #CPPFLAGS += -I..
-CFLAGS += -I.. -I../libwgtk $(VTE_CFLAGS)
-LIBS   += $(VTE_LIBS) -lX11 ../libwgtk/libwgtk.a
+CFLAGS += -I.. -I$(WGTK) $(VTE_CFLAGS)
+LIBS   += $(VTE_LIBS) -lX11
 
 all: $(APP)
 
@@ -21,7 +22,7 @@ strip: all
 distclean: clean
 
 clean:
-	rm -f *.o *~ $(APP) $(APP).exe
+	rm -f *.o *~ $(APP) $(APP).exe  $(WGTK)/*.o
 
 install: all
 	mkdir -p $(DESTDIR)$(bindir)

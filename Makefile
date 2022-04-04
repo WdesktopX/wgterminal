@@ -1,5 +1,5 @@
 
-SUBDIRS = data po libwgtk src 
+SUBDIRS = data po src 
 
 DISTCLEAN_FILES = 
 
