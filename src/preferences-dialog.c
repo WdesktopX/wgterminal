@@ -4,10 +4,7 @@
  * For more information, please refer to <https://unlicense.org>
  */
 
-// included by preferences.c
-
 #include "common.h"
-
 
 static void add2table (GtkWidget *table, GtkWidget *w1, GtkWidget *w2, int *row)
 {
@@ -16,12 +13,7 @@ static void add2table (GtkWidget *table, GtkWidget *w1, GtkWidget *w2, int *row)
         // |         label xxxvaluexxxx |
         gtk_grid_attach (GTK_GRID(table), w1, 0, *row, 1, 1);
         gtk_grid_attach (GTK_GRID(table), w2, 1, *row, 1, 1);
-#if GTK_MAJOR_VERSION >= 3
         gtk_widget_set_halign (w1, GTK_ALIGN_END);
-#else
-        // assume w1 is a GtkLabel
-        gtk_misc_set_alignment (GTK_MISC(w1), 1.0, 0.5);
-#endif
     } else if (w1 && !w2) {
         // widget use both columns
         gtk_grid_attach (GTK_GRID(table), w1, 0, *row, 2, 1);
@@ -103,7 +95,7 @@ void create_preferences_dialog (GtkWidget * parent_window)
         button = gtk_color_button_new ();
         gtk_box_pack_start (GTK_BOX(hbox), button, TRUE, TRUE, 0);
         snprintf (tmp, sizeof(tmp), "color_%d", y);
-        gtk_widget_set_tooltip_text (button, colors[y]);
+        gtk_widget_set_tooltip_text (button, gettext(colors[y]));
         PREFS_SET_OBJECT_ID(tmp, button); /* color_x */
         //puts (tmp);
         y++;
@@ -255,49 +247,33 @@ void create_preferences_dialog (GtkWidget * parent_window)
 
     //==== Tab 2 - Shortcuts ====
 
-    static const char *accel_object_tag[] = {
-        NEW_WINDOW_ACCEL,
-        NEW_TAB_ACCEL,
-        CLOSE_TAB_ACCEL,
-        CLOSE_WINDOW_ACCEL,
-        COPY_ACCEL,
-        PASTE_ACCEL,
-        NAME_TAB_ACCEL,
-        PREVIOUS_TAB_ACCEL,
-        NEXT_TAB_ACCEL,
-        MOVE_TAB_LEFT_ACCEL,
-        MOVE_TAB_RIGHT_ACCEL,
-        ZOOM_IN_ACCEL,
-        ZOOM_OUT_ACCEL,
-        ZOOM_RESET_ACCEL,
-        NULL,
-    };
-
-    static const char *accel_label[] = {
-        N_("New Window"),
-        N_("New Tab"),
-        N_("Close Tab"),
-        N_("Close Window"),
-        N_("Copy"),
-        N_("Paste"),
-        N_("Name Tab"),
-        N_("Previous Tab"),
-        N_("Next Tab"),
-        N_("Move Tab Left"),
-        N_("Move Tab Right"),
-        N_("Zoom In"),
-        N_("Zoom Out"),
-        N_("Zoom Reset"),
-        NULL,
+    static const char *accel_strv[] =
+    {  // object tag            label
+        NEW_WINDOW_ACCEL,    N_("New Window"),
+        NEW_TAB_ACCEL,       N_("New Tab"),
+        CLOSE_TAB_ACCEL,     N_("Close Tab"),
+        CLOSE_WINDOW_ACCEL,  N_("Close Window"),
+        COPY_ACCEL,          N_("Copy"),
+        PASTE_ACCEL,         N_("Paste"),
+        NAME_TAB_ACCEL,      N_("Name Tab"),
+        PREVIOUS_TAB_ACCEL,  N_("Previous Tab"),
+        NEXT_TAB_ACCEL,      N_("Next Tab"),
+        MOVE_TAB_LEFT_ACCEL, N_("Move Tab Left"),
+        MOVE_TAB_RIGHT_ACCEL,N_("Move Tab Right"),
+        ZOOM_IN_ACCEL,       N_("Zoom In"),
+        ZOOM_OUT_ACCEL,      N_("Zoom Out"),
+        ZOOM_RESET_ACCEL,    N_("Zoom Reset"),
+        NULL, NULL,
     };
 
     i = 0;
-    for (x = 0; accel_label[x]; x++)
+    for (x = 0; accel_strv[x]; x++)
     {
-        label = gtk_label_new (gettext(accel_label[x]));
+        label = gtk_label_new (gettext(accel_strv[x+1]));
         entry = gtk_entry_new ();
-        PREFS_SET_OBJECT_ID(accel_object_tag[x], entry);
+        PREFS_SET_OBJECT_ID(accel_strv[x], entry);
         add2table (table[2], label, entry, &i);
+        x++;
     }
 
     //====
