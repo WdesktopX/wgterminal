@@ -700,6 +700,8 @@ static gboolean terminal_zoom_reset_activate_event (GtkMenuItem * item, LXTermin
 /* Handler for "activate" signal on Help/About menu item. */
 static void terminal_about_activate_event (GtkMenuItem * item, LXTerminal * terminal)
 {
+    GtkWidget *w;
+    GtkWindow *main_window = GTK_WINDOW(terminal->window);
     const gchar * authors[] =
     {
         "Fred Chien <cfsghost@gmail.com>",
@@ -709,24 +711,31 @@ static void terminal_about_activate_event (GtkMenuItem * item, LXTerminal * term
         NULL
     };
     /* TRANSLATORS: Replace this string with your names, one name per line. */
-    gchar * translators = _("translator-credits");
+    gchar * translators = _("Translated by");
+
+    GdkPixbuf * logo;
+    logo = gdk_pixbuf_new_from_file (DATADIR "/icons/hicolor/128x128/apps/lxterminal.png", NULL);
 
     /* Create and initialize the dialog. */
-    GtkWidget * about_dlg = gtk_about_dialog_new();
-    gtk_container_set_border_width(GTK_CONTAINER(about_dlg), 2);
-    gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about_dlg), VERSION);
-    gtk_about_dialog_set_program_name (GTK_ABOUT_DIALOG(about_dlg), _("LXTerminal"));
-    gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about_dlg), gdk_pixbuf_new_from_file(DATADIR "/icons/hicolor/128x128/apps/lxterminal.png", NULL));
-    gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about_dlg), _("Copyright (C) 2008-2018"));
-    gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(about_dlg), _("Terminal emulator for LXDE project"));
-    gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(about_dlg), "This program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License\nas published by the Free Software Foundation; either version 2\nof the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.");
-    gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about_dlg), "http://lxde.org/");
-    gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about_dlg), authors);
-    gtk_about_dialog_set_translator_credits(GTK_ABOUT_DIALOG(about_dlg), translators);
+    w = g_object_new (GTK_TYPE_ABOUT_DIALOG,
+                      "version",      VERSION,
+                      "program-name", "LXTerminal",
+                      "copyright",    "(C) 2008-2022",
+                      "comments",     _("Terminal emulator"),
+                      "license",      "This program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License\nas published by the Free Software Foundation; either version 2\nof the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.",
+                      "website",      PACKAGE_URL,
+                      "authors",      authors,
+                      "translator-credits", translators,
+                      "logo",         logo,
+                      NULL);
+    gtk_container_set_border_width (GTK_CONTAINER (w), 2);
+    gtk_window_set_transient_for (GTK_WINDOW (w), main_window);
+    gtk_window_set_modal (GTK_WINDOW (w), TRUE);
+    gtk_window_set_position (GTK_WINDOW (w), GTK_WIN_POS_CENTER_ON_PARENT);
 
-    /* Display the dialog, wait for the user to click OK, and dismiss the dialog. */
-    gtk_dialog_run(GTK_DIALOG(about_dlg));
-    gtk_widget_destroy(about_dlg);
+    g_signal_connect_swapped (w, "response",
+                              G_CALLBACK (gtk_widget_destroy), w);
+    gtk_widget_show_all (GTK_WIDGET (w));
 }
 
 /* Handler for "switch-page" event on the tab notebook. */
