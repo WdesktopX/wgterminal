@@ -243,8 +243,7 @@ extern "C"
 //-
 #define GTK_GRID GTK_TABLE
 #define GtkGrid  GtkTable
-#define gtk_grid_attach(grid,child,left,top,width,height) \
-    gtk_table_attach_defaults((grid),(child), (left), (left)+(width), (top), (top)+(height))
+//#define gtk_grid_attach(grid,child,left,top,width,height) gtk_table_attach_defaults(grid,child,left,left+width,top,top+height)
 #define gtkcompat_grid_new(rows,cols) (gtk_table_new((rows),(cols),FALSE))
 #define gtkcompat_grid_attach       gtk_table_attach_defaults
 #define gtk_grid_set_column_spacing gtk_table_set_col_spacings
