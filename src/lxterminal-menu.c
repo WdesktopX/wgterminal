@@ -217,36 +217,6 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     /* sep */
     w_gtk_menu_item_new (&menuitem);
 
-    menuitem.label       = _("Zoom _In");
-    menuitem.icon_name   = "zoom-in";
-    menuitem.icon_alt    = "gtk-zoom-in";
-    menuitem.action_name = "Edit_ZoomIn";
-    menuitem.accel_str   = setting->zoom_in_accel;
-    menuitem.accel_path  = ACCEL_PATH_EDIT_ZOOMIN;
-    menuitem.activate_cb = terminal_zoom_in_activate_event;
-    w_gtk_menu_item_new (&menuitem);
-
-    menuitem.label       = _("Zoom O_ut");
-    menuitem.icon_name   = "zoom-out";
-    menuitem.icon_alt    = "gtk-zoom-out";
-    menuitem.action_name = "Edit_ZoomOut";
-    menuitem.accel_str   = setting->zoom_out_accel;
-    menuitem.accel_path  = ACCEL_PATH_EDIT_ZOOMOUT;
-    menuitem.activate_cb = terminal_zoom_out_activate_event;
-    w_gtk_menu_item_new (&menuitem);
-
-    menuitem.label       = _("Zoom _Reset");
-    menuitem.icon_name   = "zoom-fit-best";
-    menuitem.icon_alt    = "gtk-zoom-fit";
-    menuitem.action_name = "Edit_ZoomReset";
-    menuitem.accel_str   = setting->zoom_reset_accel;
-    menuitem.accel_path  = ACCEL_PATH_EDIT_ZOOMRESET;
-    menuitem.activate_cb = terminal_zoom_reset_activate_event;
-    w_gtk_menu_item_new (&menuitem);
-
-    /* sep */
-    w_gtk_menu_item_new (&menuitem);
-
     menuitem.label       = _("Preference_s");
     menuitem.icon_name   = "system-run";
     menuitem.icon_alt    = "gtk-preferences";
@@ -268,6 +238,36 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     menuitem.accel_str   = setting->fullscreen_accel;
     menuitem.accel_path  = ACCEL_PATH_VIEW_FULLSCREEN;
     menuitem.activate_cb = terminal_window_toggle_fullscreen;
+    w_gtk_menu_item_new (&menuitem);
+
+    /* sep */
+    w_gtk_menu_item_new (&menuitem);
+
+    menuitem.label       = _("Zoom _In");
+    menuitem.icon_name   = "zoom-in";
+    menuitem.icon_alt    = "gtk-zoom-in";
+    menuitem.action_name = "View_ZoomIn";
+    menuitem.accel_str   = setting->zoom_in_accel;
+    menuitem.accel_path  = ACCEL_PATH_VIEW_ZOOMIN;
+    menuitem.activate_cb = terminal_zoom_in_activate_event;
+    w_gtk_menu_item_new (&menuitem);
+
+    menuitem.label       = _("Zoom O_ut");
+    menuitem.icon_name   = "zoom-out";
+    menuitem.icon_alt    = "gtk-zoom-out";
+    menuitem.action_name = "View_ZoomOut";
+    menuitem.accel_str   = setting->zoom_out_accel;
+    menuitem.accel_path  = ACCEL_PATH_VIEW_ZOOMOUT;
+    menuitem.activate_cb = terminal_zoom_out_activate_event;
+    w_gtk_menu_item_new (&menuitem);
+
+    menuitem.label       = _("Zoom _Reset");
+    menuitem.icon_name   = "zoom-fit-best";
+    menuitem.icon_alt    = "gtk-zoom-fit";
+    menuitem.action_name = "View_ZoomReset";
+    menuitem.accel_str   = setting->zoom_reset_accel;
+    menuitem.accel_path  = ACCEL_PATH_VIEW_ZOOMRESET;
+    menuitem.activate_cb = terminal_zoom_reset_activate_event;
     w_gtk_menu_item_new (&menuitem);
 
     /* ### Menu Tabs ### */

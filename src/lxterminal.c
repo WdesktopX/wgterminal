@@ -1801,15 +1801,15 @@ void terminal_update_menu_shortcuts(Setting * setting)
     gtk_accel_map_change_entry (ACCEL_PATH_EDIT_COPY, key, mods, FALSE);
     gtk_accelerator_parse(setting->paste_accel, &key, &mods);
     gtk_accel_map_change_entry (ACCEL_PATH_EDIT_PASTE, key, mods, FALSE);
-    gtk_accelerator_parse(setting->zoom_in_accel, &key, &mods);
-    gtk_accel_map_change_entry (ACCEL_PATH_EDIT_ZOOMIN, key, mods, FALSE);
-    gtk_accelerator_parse(setting->zoom_out_accel, &key, &mods);
-    gtk_accel_map_change_entry (ACCEL_PATH_EDIT_ZOOMOUT, key, mods, FALSE);
-    gtk_accelerator_parse(setting->zoom_reset_accel, &key, &mods);
-    gtk_accel_map_change_entry (ACCEL_PATH_EDIT_ZOOMRESET, key, mods, FALSE);
     //--
     gtk_accelerator_parse (setting->fullscreen_accel, &key, &mods);
     gtk_accel_map_change_entry (ACCEL_PATH_VIEW_FULLSCREEN, key, mods, FALSE);
+    gtk_accelerator_parse(setting->zoom_in_accel, &key, &mods);
+    gtk_accel_map_change_entry (ACCEL_PATH_VIEW_ZOOMIN, key, mods, FALSE);
+    gtk_accelerator_parse(setting->zoom_out_accel, &key, &mods);
+    gtk_accel_map_change_entry (ACCEL_PATH_VIEW_ZOOMOUT, key, mods, FALSE);
+    gtk_accelerator_parse(setting->zoom_reset_accel, &key, &mods);
+    gtk_accel_map_change_entry (ACCEL_PATH_VIEW_ZOOMRESET, key, mods, FALSE);
     //--
     gtk_accelerator_parse(setting->name_tab_accel, &key, &mods);
     gtk_accel_map_change_entry (ACCEL_PATH_TABS_NAMETAB, key, mods, FALSE);
