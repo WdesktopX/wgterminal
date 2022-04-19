@@ -170,11 +170,10 @@ static void create_preferences_dialog (GtkWidget * parent_window)
 
     grid.c1.w = gtk_label_new (_("Tab panel position"));
     grid.c2.w = combo = gtk_combo_box_text_new ();
-    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(combo), _("Top"));
-    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(combo), _("Bottom"));
-    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(combo), _("Left"));
-    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(combo), _("Right"));
-    gtk_combo_box_set_active (GTK_COMBO_BOX(combo), 0);
+    static const char *pos_strv[] = {
+        N_("Top"), N_("Bottom"), N_("Left"), N_("Right"), NULL,
+    };
+    w_gtk_combo_box_populate_from_strv (combo, pos_strv, 0, TRUE);
     PREFS_SET_OBJECT_ID("tab_position", combo);
     w_gtk_grid_append_row (&grid);
 
