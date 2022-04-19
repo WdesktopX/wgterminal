@@ -64,6 +64,7 @@ static void terminal_zoom(LXTerminal * terminal);
 static gboolean terminal_zoom_in_activate_event (GtkMenuItem * item, LXTerminal * terminal);
 static gboolean terminal_zoom_out_activate_event (GtkMenuItem * item, LXTerminal * terminal);
 static gboolean terminal_zoom_reset_activate_event (GtkMenuItem * item, LXTerminal * terminal);
+static void terminal_window_toggle_fullscreen (GtkCheckMenuItem *item, LXTerminal * terminal);
 static void terminal_about_activate_event (GtkMenuItem * item, LXTerminal * terminal);
 
 #include "lxterminal-menu.c"
@@ -695,6 +696,20 @@ static gboolean terminal_zoom_reset_activate_event (GtkMenuItem * item, LXTermin
     terminal->scale = 1.0;
     terminal_zoom(terminal);
     return FALSE;
+}
+
+static void terminal_window_toggle_fullscreen (GtkCheckMenuItem *item, LXTerminal * terminal)
+{
+    gboolean fullscreen;
+    if (gtk_widget_get_visible (GTK_WIDGET (terminal->window)))
+    {
+        fullscreen = gtk_check_menu_item_get_active (item);
+        if (fullscreen) {
+            gtk_window_fullscreen (GTK_WINDOW (terminal->window));
+        } else {
+            gtk_window_unfullscreen (GTK_WINDOW (terminal->window));
+        }
+    }
 }
 
 /* Handler for "activate" signal on Help/About menu item. */
@@ -1781,6 +1796,7 @@ void terminal_update_menu_shortcuts(Setting * setting)
     gtk_accel_map_change_entry (ACCEL_PATH_FILE_CLOSETAB, key, mods, FALSE);
     gtk_accelerator_parse(setting->close_window_accel, &key, &mods);
     gtk_accel_map_change_entry (ACCEL_PATH_FILE_CLOSEWINDOW, key, mods, FALSE);
+    //--
     gtk_accelerator_parse(setting->copy_accel, &key, &mods);
     gtk_accel_map_change_entry (ACCEL_PATH_EDIT_COPY, key, mods, FALSE);
     gtk_accelerator_parse(setting->paste_accel, &key, &mods);
@@ -1791,6 +1807,10 @@ void terminal_update_menu_shortcuts(Setting * setting)
     gtk_accel_map_change_entry (ACCEL_PATH_EDIT_ZOOMOUT, key, mods, FALSE);
     gtk_accelerator_parse(setting->zoom_reset_accel, &key, &mods);
     gtk_accel_map_change_entry (ACCEL_PATH_EDIT_ZOOMRESET, key, mods, FALSE);
+    //--
+    gtk_accelerator_parse (setting->fullscreen_accel, &key, &mods);
+    gtk_accel_map_change_entry (ACCEL_PATH_VIEW_FULLSCREEN, key, mods, FALSE);
+    //--
     gtk_accelerator_parse(setting->name_tab_accel, &key, &mods);
     gtk_accel_map_change_entry (ACCEL_PATH_TABS_NAMETAB, key, mods, FALSE);
     gtk_accelerator_parse(setting->previous_tab_accel, &key, &mods);

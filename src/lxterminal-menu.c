@@ -120,6 +120,7 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     GtkWidget * menubar   = gtk_menu_bar_new ();
     GtkWidget * menu_file = gtk_menu_new ();
     GtkWidget * menu_edit = gtk_menu_new ();
+    GtkWidget * menu_view = gtk_menu_new ();
     GtkWidget * menu_tabs = gtk_menu_new ();
     GtkWidget * menu_help = gtk_menu_new ();
 
@@ -251,6 +252,22 @@ static void terminal_menubar_initialize (LXTerminal * terminal)
     menuitem.icon_alt    = "gtk-preferences";
     menuitem.action_name = "Edit_Preferences";
     menuitem.activate_cb = terminal_preferences_dialog;
+    w_gtk_menu_item_new (&menuitem);
+
+    /* ### Menu View ### */
+    menuitem.parent_menu = menubar;
+    menuitem.submenu     = menu_view;
+    menuitem.label       = _("_View");
+    menuitem.action_name = "View";
+    w_gtk_menu_item_new (&menuitem);
+
+    menuitem.parent_menu = menu_view;
+    menuitem.label       = _("_Fullscreen");
+    menuitem.action_name = "View_Fullscreen";
+    menuitem.checkbox    = TRUE;
+    menuitem.accel_str   = setting->fullscreen_accel;
+    menuitem.accel_path  = ACCEL_PATH_VIEW_FULLSCREEN;
+    menuitem.activate_cb = terminal_window_toggle_fullscreen;
     w_gtk_menu_item_new (&menuitem);
 
     /* ### Menu Tabs ### */

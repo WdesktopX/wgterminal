@@ -55,6 +55,7 @@
 #define CLOSE_WINDOW_ACCEL "close_window_accel"
 #define COPY_ACCEL "copy_accel"
 #define PASTE_ACCEL "paste_accel"
+#define FULLSCREEN_ACCEL "fullscreen_accel"
 #define NAME_TAB_ACCEL "name_tab_accel"
 #define PREVIOUS_TAB_ACCEL "previous_tab_accel"
 #define NEXT_TAB_ACCEL "next_tab_accel"
@@ -78,6 +79,7 @@
 #define ZOOM_IN_ACCEL_DEF        "<Control>plus"
 #define ZOOM_OUT_ACCEL_DEF       "<Control>minus"
 #define ZOOM_RESET_ACCEL_DEF     "<Control>equal"
+#define FULLSCREEN_ACCEL_DEF     "F11"
 
 /* User preferences. */
 typedef struct _setting {
@@ -126,6 +128,7 @@ typedef struct _setting {
     char * close_window_accel;      /* CLOSE_WINDOW_ACCEL */
     char * copy_accel;      /* COPY_ACCEL */
     char * paste_accel;     /* PASTE_ACCEL */
+    char * fullscreen_accel;     /* FULLSCREEN_ACCEL */
     char * name_tab_accel;      /* NAME_TAB_ACCEL */
     char * previous_tab_accel;      /* PREVIOUS_TAB_ACCEL */
     char * next_tab_accel;      /* NEXT_TAB_ACCEL */

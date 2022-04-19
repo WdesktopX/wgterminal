@@ -229,6 +229,7 @@ void save_setting()
     g_key_file_set_string(setting->keyfile, SHORTCUT_GROUP, COPY_ACCEL, setting->copy_accel);
     g_key_file_set_string(setting->keyfile, SHORTCUT_GROUP, PASTE_ACCEL, setting->paste_accel);
     g_key_file_set_string(setting->keyfile, SHORTCUT_GROUP, NAME_TAB_ACCEL, setting->name_tab_accel);
+    g_key_file_set_string(setting->keyfile, SHORTCUT_GROUP, FULLSCREEN_ACCEL, setting->fullscreen_accel);
     g_key_file_set_string(setting->keyfile, SHORTCUT_GROUP, PREVIOUS_TAB_ACCEL, setting->previous_tab_accel);
     g_key_file_set_string(setting->keyfile, SHORTCUT_GROUP, NEXT_TAB_ACCEL, setting->next_tab_accel);
     g_key_file_set_string(setting->keyfile, SHORTCUT_GROUP, MOVE_TAB_LEFT_ACCEL, setting->move_tab_left_accel);
@@ -282,6 +283,7 @@ Setting * copy_setting(Setting * setting)
     new_setting->close_window_accel = g_strdup(setting->close_window_accel);
     new_setting->copy_accel = g_strdup(setting->copy_accel);
     new_setting->paste_accel = g_strdup(setting->paste_accel);
+    new_setting->fullscreen_accel = g_strdup(setting->fullscreen_accel);
     new_setting->name_tab_accel = g_strdup(setting->name_tab_accel);
     new_setting->previous_tab_accel = g_strdup(setting->previous_tab_accel);
     new_setting->next_tab_accel = g_strdup(setting->next_tab_accel);
@@ -308,6 +310,7 @@ void free_setting(Setting ** setting)
     g_free(_setting->close_window_accel);
     g_free(_setting->copy_accel);
     g_free(_setting->paste_accel);
+    g_free(_setting->fullscreen_accel);
     g_free(_setting->name_tab_accel);
     g_free(_setting->previous_tab_accel);
     g_free(_setting->next_tab_accel);
@@ -455,6 +458,7 @@ color_preset_does_not_exist:
         setting->close_window_accel = g_key_file_get_string(setting->keyfile, SHORTCUT_GROUP, CLOSE_WINDOW_ACCEL, NULL);
         setting->copy_accel = g_key_file_get_string(setting->keyfile, SHORTCUT_GROUP, COPY_ACCEL, NULL);
         setting->paste_accel = g_key_file_get_string(setting->keyfile, SHORTCUT_GROUP, PASTE_ACCEL, NULL);
+        setting->fullscreen_accel = g_key_file_get_string(setting->keyfile, SHORTCUT_GROUP, FULLSCREEN_ACCEL, NULL);
         setting->name_tab_accel = g_key_file_get_string(setting->keyfile, SHORTCUT_GROUP, NAME_TAB_ACCEL, NULL);
         setting->previous_tab_accel = g_key_file_get_string(setting->keyfile, SHORTCUT_GROUP, PREVIOUS_TAB_ACCEL, NULL);
         setting->next_tab_accel = g_key_file_get_string(setting->keyfile, SHORTCUT_GROUP, NEXT_TAB_ACCEL, NULL);
@@ -525,6 +529,11 @@ color_preset_does_not_exist:
     if (setting->move_tab_right_accel == NULL)
     {
         setting->move_tab_right_accel = g_strdup(MOVE_TAB_RIGHT_ACCEL_DEF);
+    }
+
+    if (setting->fullscreen_accel == NULL)
+    {
+        setting->fullscreen_accel = g_strdup(FULLSCREEN_ACCEL_DEF);
     }
 
     if (setting->zoom_in_accel == NULL)

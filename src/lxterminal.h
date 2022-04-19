@@ -100,6 +100,7 @@ extern void terminal_settings_apply_to_all(LXTerminal * terminal);
 #define ACCEL_PATH_EDIT_ZOOMIN      "<LXTerminal>/Edit/ZoomIn"
 #define ACCEL_PATH_EDIT_ZOOMOUT     "<LXTerminal>/Edit/ZoomOut"
 #define ACCEL_PATH_EDIT_ZOOMRESET   "<LXTerminal>/Edit/ZoomReset"
+#define ACCEL_PATH_VIEW_FULLSCREEN  "<LXTerminal>/View/Fullscreen"
 #define ACCEL_PATH_TABS_NAMETAB     "<LXTerminal>/Tabs/NameTab"
 #define ACCEL_PATH_TABS_PREVIOUSTAB "<LXTerminal>/Tabs/PreviousTab"
 #define ACCEL_PATH_TABS_NEXTTAB     "<LXTerminal>/Tabs/NextTab"
