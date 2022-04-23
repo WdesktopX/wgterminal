@@ -24,6 +24,8 @@ if [ -z "$VERSION" ] ; then
 	fi
 fi
 
+#==========================================================================
+
 get_linguas()
 {
 	if [ -z "$LINGUAS" ] ; then
@@ -34,6 +36,7 @@ get_linguas()
 		exit 0
 	fi
 }
+
 
 get_pot_source_files()
 {
@@ -56,6 +59,7 @@ get_pot_source_files()
 	echo "$POT_SOURCE_FILES" >> POTFILES
 }
 
+
 get_gettext_package()
 {
 	if [ -z "$GETTEXT_PACKAGE" ] ; then
@@ -75,24 +79,34 @@ update_pot()
 	get_gettext_package
 	#--
 	echo "GETTEXT_PACKAGE: ${GETTEXT_PACKAGE}.pot"
-	extraopts='--omit-header --no-wrap'
 	xgettext \
 		--default-domain=${GETTEXT_PACKAGE} \
 		--add-comments \
+		--no-wrap \
 		--keyword=_ \
 		--keyword=N_ \
-		--from-code=UTF-8 ${extraopts} \
+		--from-code=UTF-8 \
 		--package-name=${GETTEXT_PACKAGE} \
 		-o ${GETTEXT_PACKAGE}.pot2 ${POT_SOURCE_FILES}
-
-	if [ $? -eq 0 ] ; then
-		mv ${GETTEXT_PACKAGE}.pot2 ${GETTEXT_PACKAGE}.pot
-	else
+	if [ $? -ne 0 ] ; then
 		rm -f ${GETTEXT_PACKAGE}.pot2
 		exit 1
 	fi
-	sed -i -e 's%charset=CHARSET%charset=UTF-8%' \
-		${GETTEXT_PACKAGE}.pot
+	(
+	echo '# This file is put in the public domain.'
+	# fix charset and remove some unnecesary info
+	sed \
+		-e 's%charset=CHARSET%charset=UTF-8%' \
+		-e '/^# /d' \
+		-e '/Project-Id-Version/d' \
+		-e '/Report-Msgid-Bugs-To/d' \
+		-e '/POT-Creation-Date/d' \
+		-e '/PO-Revision-Date/d' \
+		-e '/Last-Translator/d' \
+		-e '/Language-Team/d' \
+		${GETTEXT_PACKAGE}.pot2
+	) > ${GETTEXT_PACKAGE}.pot
+	rm -f ${GETTEXT_PACKAGE}.pot2
 }
 
 
@@ -104,13 +118,17 @@ update_po()
 	for lang in ${LINGUAS}
 	do
 		printf " %s " "${lang}";
-		sed -i -e 's%charset=CHARSET%charset=UTF-8%' ${lang}.po
+		sed -i -e 's%charset=CHARSET%charset=UTF-8%' ${lang}.po;
 		if msgmerge ${lang}.po ${GETTEXT_PACKAGE}.pot -o ${lang}.new.po; then
 			mv -f ${lang}.new.po ${lang}.po || exit 1;
 		else
 			echo "msgmerge for $lang failed!";
 			rm -f ${lang}.new.po;
 		fi;
+		if grep -q 'Language: \\\n' ${lang}.po ; then
+			# fix language:
+			sed -i 's%Language: \\n%Language: '${lang}'\\n%' ${lang}.po
+		fi
 	done
     #sed -i '/#~ /d' po/*.po
 	exit

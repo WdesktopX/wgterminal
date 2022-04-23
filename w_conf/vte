@@ -49,21 +49,27 @@ opt_check_vte()
 		return
 	fi
 
+	if [ -z "$gtkpc" ] ; then
+		exit_error "\$gtkpc is not set, gtk must be evaluated first"
+	fi
+
+	if [ "$gtkpc" = "gtk+-2.0" ] ; then
+		vte_pc_pkg="vte"
+	else
+		# gtk+-3.0 / gtk4
+		vte_pc_pkg="vte-2.91"
+	fi
+	pcpkg=${vte_pc_pkg}
+
 	if [ -n "$VTE_CFLAGS" ] || [ -n "$VTE_LIBS" ] ; then
 		echo "Checking for VTE... \$VTE_CFLAGS/\$VTE_LIBS"
 	else
-		pcpkg=
-		for onepkg in ${vte_pc_pkg}
-		do
-			if w_pkgconfig_check ${onepkg} ${W_VTE_MIN_VERSION} ; then
-				pcpkg=${onepkg}
-				break
-			fi
-		done
-
-		if [ -z "$pcpkg" ] ; then
+		if ! w_pkgconfig_check ${pcpkg} ${W_VTE_MIN_VERSION} ; then
 			if [ "$enable_vte" = "yes" ] ; then
-				exit_error "pkg-config: vte was not found"
+				if [ "$pcpkg" = "vte-2.91" ] ; then
+					echo "- You might want to --enable-gtk2"
+				fi
+				exit_error "pkg-config: $pcpkg was not found"
 			fi
 			return
 		fi

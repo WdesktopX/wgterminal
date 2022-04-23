@@ -13,15 +13,9 @@ PROJECT_LDFLAGS=''
 PROJECT_LXXFLAGS=''
 PROJECT_LIBS=''
 
-# Enhance --sysroot?
-#W_SYSROOT_PLUS_INCLUDES_AND_LIBS=1
-
 # Project type, use C to avoid checking for C++ compiler and stuff
 # supported values: C, C++ ("" = C++)
 PROJECT_TYPE=C
-
-# Use mktemp to produce temp files
-#W_USE_MKTEMP=1
 
 # config.h: custom extra lines
 w_config_h_extra_lines=""
@@ -58,7 +52,6 @@ w_main_func()
 #   ZLIB_CFLAGS =
 #   ZLIB_LIBS   =
 
-#PO2C_FILE='lang.c'
 GETTEXT_PACKAGE="$PACKAGE"
 . w_conf/gettext
 
@@ -71,7 +64,7 @@ GETTEXT_PACKAGE="$PACKAGE"
 ##-- support only 1 version
 #W_GTK_ONLY_VERSION=2
 #W_GTK_MIN_VERSION=2.24
-#. w_conf/gtk
+. w_conf/gtk
 
 #W_PTHREAD_IS_OPTIONAL=yes
 #. w_conf/pthread
