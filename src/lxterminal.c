@@ -393,7 +393,7 @@ static void terminal_new_tab(LXTerminal * terminal, const gchar * label)
 
 static void terminal_vte_size_allocate_event(GtkWidget *widget, GtkAllocation *allocation, Term *term)
 {
-    GdkGeometry geometry;
+    GdkGeometry geometry = {0};
     terminal_set_geometry_hints(term, &geometry);
     g_signal_handlers_disconnect_by_func(widget, terminal_vte_size_allocate_event, term);
 }
@@ -775,8 +775,10 @@ static void terminal_switch_page_event(GtkNotebook * notebook, GtkWidget * page,
         const gchar * title = gtk_label_get_text(GTK_LABEL(term->label));
         gtk_window_set_title(GTK_WINDOW(terminal->window), ((title != NULL) ? title : _("LXTerminal Terminal Emulator")));
 
+#if GTK_CHECK_VERSION(2,18,0)
         /* Wait for its size to be allocated, then set its geometry */
         g_signal_connect(notebook, "size-allocate", G_CALLBACK(terminal_vte_size_allocate_event), term);
+#endif
     }
 }
 
@@ -1749,12 +1751,14 @@ static void terminal_settings_apply(LXTerminal * terminal)
     /* update <ALT>n status */
     terminal_update_alt(terminal);
 
+#if GTK_CHECK_VERSION(2,18,0)
+    // This doesn't work with gtk 2.14
     GtkNotebook *notebook = GTK_NOTEBOOK(terminal->notebook);
     gint current_page_number = gtk_notebook_get_current_page(notebook);
     Term *term = g_ptr_array_index(terminal->terms, current_page_number);
-
     /* Wait for its size to be allocated, then set its geometry */
     g_signal_connect(term->vte, "size-allocate", G_CALLBACK(terminal_vte_size_allocate_event), term);
+#endif
 }
 
 /* Apply terminal settings to all tabs in all terminals. */
