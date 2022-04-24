@@ -124,7 +124,7 @@ GtkWidget * w_gtk_image_new_from_icon_name (const char *icon_name, GtkIconSize s
         img = gtk_image_new_from_stock (icon_name, size);
     } else {
         // get blank/invalid image
-        fprintf (stderr, "(GtkImage) %s was not found in icon theme\n", icon_name);
+        fprintf (stderr, "(GtkImage-new) %s was not found in icon theme\n", icon_name);
         img = gtk_image_new_from_icon_name (icon_name, size);
     }
     return img;
@@ -143,7 +143,7 @@ void w_gtk_image_set_from_icon_name (GtkImage *img, const char *icon_name, GtkIc
         gtk_image_set_from_stock (img, icon_name, size);
     } else {
         // set blank/invalid image
-        fprintf (stderr, "%s was not found in icon theme\n", icon_name);
+        fprintf (stderr, "(GtkImage-set) %s was not found in icon theme\n", icon_name);
         gtk_image_set_from_icon_name (img, icon_name, size);
     }
 }
@@ -177,6 +177,24 @@ GtkWidget * w_gtk_button_new (const char * label,
     }
     gtk_widget_set_can_default (button, TRUE);
     return button;
+}
+
+
+void w_gtk_button_flat (GtkWidget * button, gboolean reduce_size)
+{
+    gtk_button_set_relief (GTK_BUTTON(button), GTK_RELIEF_NONE);
+    gtk_button_set_focus_on_click (GTK_BUTTON(button), FALSE);
+    gtk_widget_set_can_focus (GTK_WIDGET(button), FALSE);
+    gtk_widget_set_can_default (button, FALSE);
+    if (reduce_size) {
+#if GTK_MAJOR_VERSION <= 2
+        /* Make the button as small as possible. */
+        GtkRcStyle * rcstyle = gtk_rc_style_new();
+        rcstyle->xthickness = rcstyle->ythickness = 0;
+        gtk_widget_modify_style (button, rcstyle);
+        g_object_ref (rcstyle);
+#endif
+    }
 }
 
 

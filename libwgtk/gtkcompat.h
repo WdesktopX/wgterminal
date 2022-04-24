@@ -4,7 +4,7 @@
  * For more information, please refer to <https://unlicense.org>
  */
 
-/** 2022-04-14 **/
+/** 2022-04-20 **/
 
 /*
  * gtkcompat.h, GTK2+ compatibility layer
@@ -150,13 +150,27 @@ extern "C"
 #define gtkcompat_grid_new(rows,cols) (gtk_grid_new())
 #endif
 
+
+#if GTK_MAJOR_VERSION == 3
+
+// GTK >= 3.20 (gtk_widget_set_focus_on_click)
+#if GTK_MINOR_VERSION >= 20
+#define gtk_button_set_focus_on_click(w,b) gtk_widget_set_focus_on_click(GTK_WIDGET(w),b)
+#define gtk_button_get_focus_on_click(w)   gtk_widget_get_focus_on_click(GTK_WIDGET(w))
+#define gtk_combo_box_set_focus_on_click(w,b) gtk_widget_set_focus_on_click(GTK_WIDGET(w),b)
+#define gtk_combo_box_get_focus_on_click(w)   gtk_widget_get_focus_on_click(GTK_WIDGET(w))
+#define gtk_file_chooser_button_set_focus_on_click(w,b) gtk_widget_set_focus_on_click(GTK_WIDGET(w),b)
+#define gtk_file_chooser_button_get_focus_on_click(w)   gtk_widget_get_focus_on_click(GTK_WIDGET(w))
+#endif
+
 /* GTK < 3.12
 #if ! GTK_CHECK_VERSION (3, 12, 0)
-#define gtk_application_set_accels_for_action(app,name,accels) \
-          gtk_application_add_accelerator(app,accels[0],name,NULL)
+#define gtk_application_set_accels_for_action(app,name,accels)   gtk_application_add_accelerator(app,accels[0],name,NULL)
 #define gtk_widget_set_margin_start(widget,margin) gtk_widget_set_margin_left(widget,margin)
 #define gtk_widget_set_margin_end(widget,margin)   gtk_widget_set_margin_right(widget,margin)
 #endif */
+
+#endif /* ------- GTK3 ------- */
 
 
 /* ================================================== */

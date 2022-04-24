@@ -34,6 +34,8 @@ GtkWidget * w_gtk_button_new (const char * label,
                               gpointer clicked_cb,
                               gpointer cdata);
 
+void w_gtk_button_flat (GtkWidget * button, gboolean reduce_size);
+
 GtkWidget * w_gtk_image_new_from_icon_name (const char *icon_name, GtkIconSize size);
 void w_gtk_image_set_from_icon_name (GtkImage *img, const char *icon_name, GtkIconSize size);
 void w_gtk_button_set_icon_name (GtkButton *button, const char *icon_name);

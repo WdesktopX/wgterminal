@@ -1150,7 +1150,7 @@ static Term * terminal_new(LXTerminal * terminal, const gchar * label, const gch
     GtkStyleContext* box_style_ctx =
         gtk_widget_get_style_context(GTK_WIDGET(terminal->box));
     gtk_style_context_add_provider(
-        box_style_ctx, box_css_provider,
+        box_style_ctx, GTK_STYLE_PROVIDER(box_css_provider),
         GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     #endif
 
@@ -1185,34 +1185,23 @@ static Term * terminal_new(LXTerminal * terminal, const gchar * label, const gch
     g_regex_unref(dingus1);
     g_regex_unref(dingus2);
 
-    /* Create a horizontal box inside an event box as the toplevel for the tab label. */
-    term->tab = gtk_event_box_new();
-    gtk_widget_set_events(term->tab, GDK_BUTTON_PRESS_MASK);
-    GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-    gtk_container_add(GTK_CONTAINER(term->tab), hbox);
+    /* Create a horizontal box as the toplevel for the tab label. */
+    GtkWidget * hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
+    GtkWidget * img = gtk_image_new ();
+    term->tab = gtk_event_box_new ();
+    gtk_widget_add_events (term->tab, GDK_BUTTON_PRESS_MASK);
+    gtk_container_add (GTK_CONTAINER(term->tab), hbox);
 
     /* Create the Close button. */
     term->close_button = gtk_button_new();
-    gtk_button_set_relief(GTK_BUTTON(term->close_button), GTK_RELIEF_NONE);
-#if GTK_CHECK_VERSION (3, 20, 0)
-    gtk_widget_set_focus_on_click(term->close_button, FALSE);
-#else
-    gtk_button_set_focus_on_click(GTK_BUTTON(term->close_button), FALSE);
-#endif
-#if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_container_add(GTK_CONTAINER(term->close_button), gtk_image_new_from_icon_name("window-close", GTK_ICON_SIZE_MENU));
-#else
-    gtk_container_add(GTK_CONTAINER(term->close_button), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU));
-#endif
-
-    /* Make the button as small as possible. */
-#if GTK_CHECK_VERSION(3, 0, 0)
-#else
-    GtkRcStyle * rcstyle = gtk_rc_style_new();
-    rcstyle->xthickness = rcstyle->ythickness = 0;
-    gtk_widget_modify_style(term->close_button, rcstyle);
-    g_object_ref(rcstyle);
-#endif
+    GtkIconTheme * theme = gtk_icon_theme_get_default();
+    if (gtk_icon_theme_has_icon (theme, "window-close")) {
+        w_gtk_image_set_from_icon_name (GTK_IMAGE(img), "window-close", GTK_ICON_SIZE_MENU);
+    } else {
+        w_gtk_image_set_from_icon_name (GTK_IMAGE(img), "gtk-close", GTK_ICON_SIZE_MENU);
+    }
+    gtk_button_set_image (GTK_BUTTON(term->close_button), img);
+    w_gtk_button_flat (term->close_button, TRUE);
 
     /* Come up with default label and window title */
     if (exec == NULL)
@@ -1244,12 +1233,7 @@ static Term * terminal_new(LXTerminal * terminal, const gchar * label, const gch
     term->label = gtk_label_new((label != NULL) ? label : vte_terminal_get_window_title(VTE_TERMINAL(term->vte)));
     gtk_widget_set_size_request(GTK_WIDGET(term->label), setting->tab_width, -1);
     gtk_label_set_ellipsize(GTK_LABEL(term->label), PANGO_ELLIPSIZE_END);
-#if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_widget_set_valign(term->label, GTK_ALIGN_CENTER);
-#else
-    gtk_misc_set_alignment(GTK_MISC(term->label), 0.0, 0.5);
-    gtk_misc_set_padding(GTK_MISC(term->label), 0, 0);
-#endif
+    gtk_widget_set_halign (term->label, GTK_ALIGN_START);
 
     /* Pack everything and show the widget. */
     gtk_box_pack_start(GTK_BOX(hbox), term->label, TRUE, TRUE, 0);
